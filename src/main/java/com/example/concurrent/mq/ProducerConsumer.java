@@ -21,6 +21,8 @@ public class ProducerConsumer {
         Consumer c2 = new Consumer("老刘",queues);
         Consumer c3 = new Consumer("老李",queues);
 
+
+
         service.submit(p);
         service.submit(p2);
         service.submit(c);
