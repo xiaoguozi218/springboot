@@ -24,8 +24,8 @@ public class CountTask extends RecursiveTask<Long>{
     @Override
     protected Long compute() {
         long sum = 0;
-        boolean canCompute = (end - start) < THRESHOLD;
-        if(canCompute){
+        boolean isCompute = (end - start) < THRESHOLD;
+        if(isCompute){
             for (int i = 0; i <=end ; i++) {
                 sum += i;
             }
@@ -64,6 +64,10 @@ public class CountTask extends RecursiveTask<Long>{
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+
+
+
+        String str = "{\"name\":\"小果子\",\"age\":27}";
 
     }
 }
