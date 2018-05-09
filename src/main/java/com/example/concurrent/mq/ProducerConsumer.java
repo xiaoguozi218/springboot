@@ -1,9 +1,6 @@
 package com.example.concurrent.mq;
 
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.*;
 
 /**
  * Created by MintQ on 2018/5/9.
@@ -11,7 +8,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class ProducerConsumer {
 
     public static void main(String[] args) {
-        BlockingDeque<Product> queues = new LinkedBlockingDeque<Product>(10);
+        BlockingQueue<Product> queues = new LinkedBlockingQueue<Product>(10);
 
         ExecutorService service = Executors.newCachedThreadPool();
 

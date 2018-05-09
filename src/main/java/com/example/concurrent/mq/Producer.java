@@ -1,6 +1,7 @@
 package com.example.concurrent.mq;
 
 import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
 
 /**
  * Created by MintQ on 2018/5/9.
@@ -12,9 +13,9 @@ import java.util.concurrent.BlockingDeque;
 public class Producer implements Runnable {
 
     private String name;
-    BlockingDeque<Product> s;
+    BlockingQueue<Product> s;
 
-    public Producer(String name, BlockingDeque<Product> s) {
+    public Producer(String name, BlockingQueue<Product> s) {
         this.name = name;
         this.s = s;
     }
