@@ -18,6 +18,12 @@ package com.example.concurrent.thread;
  *
  *
  *
+ *  一、Java内存模型与线程
+ *
+ *
+ *
+ *
+ *  二、线程安全性
  *
  *
  *
@@ -36,10 +42,72 @@ package com.example.concurrent.thread;
 
      对此，单例模式是个很好的学习例子：
 
+ *  四、线程安全策略
  *
+ *      1、不可变对象
+ *      2、线程封闭
+ *      3、线程不安全写法
+ *      4、同步容器
+ *      5、线程安全-并发容器-J.U.C
  *
+ *  五、J.U.C之 AQS
+ *      【1】使用Node实现FIFO队列，可以用于构建锁或者其它同步装置的基础框架；
+ *      【2】利用了一个int类型表示状态；
+ *      【3】使用方法是继承；
+ *      【4】子类通过继承并通过实现它的方法管理锁的状态，对应AQS中acquire和release的方法操纵锁状态；
+ *      【5】可以同步实现排它锁和共享锁模式（独占、共享）。
  *
+ *    AQS同步组件：CountDownLatch、Semaphore、CyclicBarrier、ReentrantLock、ReentrantReadWriteLock、Condition、FutureTask、Fork/Join、BlockingQueue
+ *      1、等待多线程完成的CountDownLatch（JDK1.5）
+ *          允许一个或多个线程等待其他线程完成操作。    其构造函数接收一个int类型的参数作为计数器，调用CountDown方法的时候，计数器的值会减1，CountDownLatch的await方法会阻塞当前线程，直到N变为零。
+ *          应用：并行计算，解析Excel中多个Sheet的数据。
+ *      2、控制并发线程数的Semaphore
+ *          用来控制同时访问特定资源线程的数量。  应用：流量控制，特别是公共资源有限的场景，如数据库连接。
+ *          //可用的许可的数量  Semaphore(int permits)
+ *          //获取一个许可    aquire()
+ *          //使用完成后归还许可 release()
+ *          //尝试获取许可证   tryAcquire()
+ *      3、同步屏障CyclicBarrier
+ *          让一组线程达到一个屏障（同步点）时被阻塞，直到最后一个线程到达屏障时，才会开门，所有被屏障拦截的线程才会继续执行。
+ *          应用：多线程计算数据，最后合并计算结果的场景。
+ *          CyclicBarrier和CountDownLatch的区别：    CountDownLatch计数器只能使用一次，CyclicBarrier可以调用reset()方法重置。所以CyclicBarrier可以支持更加复杂的场景，如发生错误后重置计数器，并让线程重新执行。
+ *          //屏障拦截的线程数量     CyclicBarrier(int permits)
+ *          //已经到达屏障    await()
+ *          //CyclicBarrier阻塞线程的数量  getNumberWaiting()
+ *      4、重入锁ReentrantLock （排他锁：同时允许单个线程访问。）
+ *          支持重进入的锁，表示该锁能够支持一个线程对资源的重复加锁，即实现重进入：任意线程获取到锁之后能够再次获取该锁而不会被锁阻塞。
+ *          该锁支持获取锁时的公平和非公平性选择：public ReentrantLock(boolean fair) {sync = fair ? new FairSync() : new NonfairSync();}
+ *              公平锁就是等待时间最长的线程最优先获取锁，也就是说获取锁的是顺序的（FIFO），而非公平则允许插队。
+ *              非公平因为不保障顺序，则效率相对较高，而公平锁则可以减少饥饿发生的概率：
+ *                  [1]、提供了一个Condition类，可以分组唤醒需要唤醒的线程；
+ *                  [2]、提供能够中断等待锁的线程机制，lock.lockInterruptibly()
+ *      5、ReentrantReadWriteLock （读写锁，实现悲观读取，同时允许多个线程访问）
+ *          在写线程访问时，所有读线程和其他写线程均被堵塞。其维护了一对锁，通过分离读锁、写锁，使得并发性比排他锁有很大提升。   适用于读多写少的环境，能够提供比排他锁更好的并发与吞吐量。
+ *          不足：ReentrantReadWriteLock是读写锁，在多线程环境下，大多数情况是读的情况远远大于写的操作，因此可能导致写的饥饿问题。
+ *          StampedLock ： 是ReentrantReadWriteLock 的增强版，是为了解决ReentrantReadWriteLock的一些不足。
+ *              StampedLock读锁并不会阻塞写锁，设计思路也比较简单，就是在读的时候发现有写操作，再去读多一次。StampedLock有两种锁，一种是悲观锁，另外一种是乐观锁，如果线程拿到乐观锁就读和写不互斥，如果拿到悲观锁就读和写互斥。
  *
+ *      6、Condition
+ *          Condition提供了类似Object的监视器方法，依赖Lock实现等待/通知模式。
+ *              【1】await():当前线程进入等待状态直到被通知或中断，当前线程进入运行状态且从await()方法返回；
+ *              【2】signal():唤醒一个在Condition上的线程，该线程从等待方法返回前必须获得与Condition相关联的锁。
+ *      7、FutureTask
+ *          用于异步获取执行结果或取消执行任务的场景。（实现基于AQS）
+ *      8、Fork/Join
+ *          并行执行任务，即把大任务分割成若干小任务并行执行，最后汇总成大任务结果的框架。
+ *              工作窃取算法：指的是某个线程从其他队列里窃取任务来执行。即这个队列先干完活，再去帮别人干点。
+ *      9、BlockingQueue
+ *          阻塞队列是一个支持两个附加操作的队列：
+ *              [1]阻塞插入：当队列满的时候，队列会阻塞插入元素的线程，直到队列不满。
+ *              [2]阻塞移除：当队列为空时，获取元素的线程就会等待队列变为非空。
+ *          通常用于生产者和消费者场景。生产者是向队列里添加元素的线程，消费者是从列里获取元素的线程。阻塞队列就是生产者放元素，消费者获取元素的容器。(FIFO)
+ *              ArrayBlockingQueue
+ *              LinkedBlockingQueue
+ *              PriorityBlockingQueue
+ *              DelayQueue
+ *              SynchronousQueue
+ *              LinkedTransferQueue
+ *              LinkedBlockingDeque
  *
  *
  *  六、线程与线程池
