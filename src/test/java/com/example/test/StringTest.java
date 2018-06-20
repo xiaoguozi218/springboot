@@ -9,6 +9,9 @@ import java.util.TreeSet;
 
 /**
  * Created by MintQ on 2018/5/17.
+ *
+ *
+ *
  */
 public class StringTest {
 
@@ -80,7 +83,28 @@ public class StringTest {
 //        }
 
 //        System.out.println(getValue(2));
+        /**
+         * 我们再来解释String在传递过程中的步骤：
+         *  1   虚拟机在堆中开辟一块内存，并存值”ab”。
+            2   虚拟机在栈中分配给str一个内存，内存中存的是1中的地址。
+            3   虚拟机复制一份str，我们叫str1，str和str1内存不同，但存的值都是1的。
+            4   将str1传入方法体
+            5   方法体在堆中开辟一块内存，并存值”cd”
+            6   方法体将str1的值改变，存入5的内存地址
+            7   方法结束，方法外打印str，由于str存的是1的地址，所有打印结果是”ab”
+         *
+         */
+        String str = "ab";
+        modify(str);
+        System.err.println(str);
+//        System.err.println(modify);
 
+
+    }
+
+
+    private static String modify(String input) {
+        return input = "cd";
     }
 
 //    public static int getValue(int i) {
@@ -123,35 +147,10 @@ public class StringTest {
 //        }
 //    }
 
-    static class Parent{
-        public Parent() {
-            System.out.println("Parent");
-        }
-        {
-            System.out.println("Im Parent class");
-        }
-        static {
-            System.out.println("static Parent");
-        }
-    }
-
-    static class Child extends Parent{
-        public Child() {
-            System.out.println("Child");
-        }
-        {
-            System.out.println("Im Child class");
-        }
-        static {
-            System.out.println("static Child");
-        }
-    }
 
     static void pong() {
         System.out.print("pong");
     }
 
-    private static void modify(String input) {
-        input = input + "modified.";
-    }
+
 }
