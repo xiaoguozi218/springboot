@@ -2,10 +2,23 @@ package com.example.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.MonthDay;
 import java.util.Calendar;
 import java.util.Date;
 
-
+/**
+ * JDK8 时间日期库
+ *  Instant——它代表的是时间戳
+    LocalDate——不包含具体时间的日期，比如2014-01-14。它可以用来存储生日，周年纪念日，入职日期等。
+    LocalTime——它代表的是不含日期的时间
+    LocalDateTime——它包含了日期及时间，不过还是没有偏移信息或者说时区。
+    ZonedDateTime——这是一个包含时区的完整的日期时间，偏移量是以UTC/格林威治时间为基准的。
+ *
+ *
+ *
+ *
+ */
 public class DateUtils {
 
 
@@ -96,7 +109,6 @@ public class DateUtils {
 
     public static Date resetHMS(Date date) {
 
-
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -105,4 +117,47 @@ public class DateUtils {
 
         return calendar.getTime();
     }
+
+
+    /**
+     * @param args
+     *
+     *
+     */
+    public static void main(String[] args) {
+        //示例1 如何 在Java 8中获取当天的日期    2018-06-21
+//        LocalDate today = LocalDate.now();
+//        System.out.println("Today's Local date : " + today);
+
+        //示例2 如何在Java 8中获取当前的年月日
+//        LocalDate today = LocalDate.now();
+//        int year = today.getYear();
+//        int month = today.getMonthValue();
+//        int day = today.getDayOfMonth();
+//        System.out.printf("Year : %d Month : %d day : %d \t %n", year, month, day);
+
+        //示例3 在Java 8中如何获取某个特定的日期
+//        LocalDate dateOfBirth = LocalDate.of(2010, 01, 14);
+//        System.out.println("Your Date of birth is : " + dateOfBirth);
+
+        //示例4 在Java 8中如何检查两个日期是否相等
+//        LocalDate date1 = LocalDate.of(2018, 06, 21);
+//        if(date1.equals(today)){
+//            System.out.printf("Today %s and date1 %s are same date %n", today, date1);
+//        }
+
+        //示例5 在Java 8中如何检查重复事件，比如说生日
+//        LocalDate dateOfBirth = LocalDate.of(2010, 01, 14);
+//        MonthDay birthday = MonthDay.of(dateOfBirth.getMonth(), dateOfBirth.getDayOfMonth());
+//        MonthDay currentMonthDay = MonthDay.from(today);
+//        if(currentMonthDay.equals(birthday)){
+//            System.out.println("Many Many happy returns of the day !!");
+//        }else{
+//            System.out.println("Sorry, today is not your birthday");
+//        }
+
+
+
+    }
+
 }
