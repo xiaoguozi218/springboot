@@ -28,5 +28,24 @@ public class FinallyTest {
 //        }
         // 3、线程被杀死  当执行try,finally的线程被杀死时，finally 也无法执行。
 
+        System.err.println(a());
+        System.err.println(target);
+
+    }
+
+    static int target = 8;
+
+    public static int a() {
+        try {
+
+            return target;
+        } catch (Exception e) {
+            return 9;
+        } finally {
+            target = 10;
+            return  target;
+        }
+
+
     }
 }
