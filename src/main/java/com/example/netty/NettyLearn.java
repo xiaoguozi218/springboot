@@ -45,4 +45,10 @@ package com.example.netty;
 public class NettyLearn {
 
 
+    public static void main(String[] args) {
+
+        System.err.println(Runtime.getRuntime().availableProcessors());
+    }
+
+
 }
