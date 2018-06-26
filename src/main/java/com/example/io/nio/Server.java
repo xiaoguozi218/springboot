@@ -12,7 +12,7 @@ import java.util.Iterator;
 /**
  * Created by MintQ on 2018/6/12.
  *
- * NIO (non-blocking io) : NIO也称为New IO，是一种同步非阻塞的通信模式，NIO 相对于BIO来说是一大进步。
+ * NIO (non-blocking io) : NIO也称为New IO，是一种 同步非阻塞 的通信模式，NIO 相对于BIO来说是一大进步。
  *                         客户端和服务器之间通过Channel通信，NIO可以在Channel进行读写操作，这些Channel都会被注册在Selector多路复用器上。
  *                         Selector通过一个线程不停的轮询这些Channel，找出已经准备就绪的Channel执行IO操作。
  *                         NIO 通过一个线程轮询，再基于轮询到的事件进行处理，不需要再为每个连接单独开个线程处理，从而以 较高的资源复用率 处理成千上万个客户端的请求，这就是非阻塞NIO的特点。
@@ -24,8 +24,11 @@ import java.util.Iterator;
  *                                                                      最关键的是channel有多种状态位，可以与selector结合起来，方便selector去识别。
  *
  *
- *  简单描述下工作原理。它使用了 reactor 模式: 一个线程通过多个任务之间的多路复用来满足所有请求，而从不在任何地方阻塞。
- *  只要有什么东西准备好了，它就会被这个线程(或者几个线程)处理。
+ *  注意：1、简单描述下工作原理。它使用了 reactor 模式: 一个线程通过多个任务之间的多路复用来满足所有请求，而从不在任何地方阻塞。
+ *          只要有什么东西准备好了，它就会被这个线程(或者几个线程)处理。
+ *      2、
+ *
+ *
  *
  */
 public class Server implements Runnable{

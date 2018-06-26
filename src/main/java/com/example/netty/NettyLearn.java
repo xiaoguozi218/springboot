@@ -41,6 +41,14 @@ package com.example.netty;
  *
  *  用POJO代替ByteBuf ：在ChannelHandler中使用POJO的优点是显而易见的; 处理程序将从ByteBuf中提取信息的代码分离出来，使程序更易维护和可重用。
  *
+ *
+ *  Netty In Action 读书心得：
+ *
+ *  第一章：Netty介绍
+ *
+ *  第二章：第一个Netty程序
+ *
+ *
  */
 public class NettyLearn {
 
