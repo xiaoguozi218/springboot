@@ -2,8 +2,8 @@ package com.example.mq;
 
 /**
  * Created by MintQ on 2018/5/30.
- *  消息队列 （Message Queue）
- *      1、解耦和
+ *  消息队列 （Message Queue）        消息系统的核心作用就是三点：解耦，异步和并行
+ *      1、解耦合
  *      2、提高系统的响应时间
  *
  *  消息队列分类： 1、点对点：消息生产者生产消息发送到queue中，然后 消息消费者从queue中取出并且消费消息。

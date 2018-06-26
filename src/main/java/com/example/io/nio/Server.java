@@ -24,6 +24,8 @@ import java.util.Iterator;
  *                                                                      最关键的是channel有多种状态位，可以与selector结合起来，方便selector去识别。
  *
  *
+ *  简单描述下工作原理。它使用了 reactor 模式: 一个线程通过多个任务之间的多路复用来满足所有请求，而从不在任何地方阻塞。
+ *  只要有什么东西准备好了，它就会被这个线程(或者几个线程)处理。
  *
  */
 public class Server implements Runnable{
