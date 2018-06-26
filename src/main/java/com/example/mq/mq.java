@@ -20,7 +20,7 @@ package com.example.mq;
  *  Kafka的核心概念：1、Producer 特指消息的生产者
  *                 2、Consumer 特指消息的消费者
  *                 3、Consumer Group 消费者组，可以并行消费Topic中partition的消息
- *                 4、Broker ：缓存代理，Kafka集群中的一台或多台服务器统称为broker 。
+ *                 4、Broker ：每个kafka实例(server) / (缓存代理，Kafka集群中的一台或多台服务器统称为broker)。
  *                 5、topic : 特指Kafka处理的消息源（feeds of messages）的不同分类。
  *                 6、Partition ：topic物理上的分组，一个topic可以分为多个partition，每个partition是一个有序的队列。partition中的每条消息都会被分配一个有序的id（offset）。
  *

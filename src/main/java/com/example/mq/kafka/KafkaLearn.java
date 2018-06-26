@@ -11,6 +11,10 @@ package com.example.mq.kafka;
  *  (3)、无论是Kafka集群，还是Producer和Consumer都依赖于zookeeper集群保存一些meta信息，来保证系统可用性。
  *
  *
+ * 查漏补缺：
+ *  1、segment达到一定的大小（可以通过配置文件设定,默认 1G ）后将不会再往该segment写数据，broker会创建新的segment。
+ *  2、
+ *
  */
 public class KafkaLearn {
 
