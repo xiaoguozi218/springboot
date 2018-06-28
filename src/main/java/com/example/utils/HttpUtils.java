@@ -21,6 +21,8 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -371,5 +373,36 @@ public class HttpUtils {
         return jSONObject;
         
     }
+
+
+	/**
+	 * http get 请求拼接url
+	 * @param url
+	 * @param params
+	 * @return
+	 */
+	public static String getUrl(String url,HashMap<String, String> params) {
+//		String url = requestUrl;
+		// 添加url参数
+		if (params != null) {
+			Iterator<String> it = params.keySet().iterator();
+			StringBuffer sb = null;
+			while (it.hasNext()) {
+				String key = it.next();
+				String value = params.get(key);
+				if (sb == null) {
+					sb = new StringBuffer();
+					sb.append("?");
+				} else {
+					sb.append("&");
+				}
+				sb.append(key);
+				sb.append("=");
+				sb.append(value);
+			}
+			url += sb.toString();
+		}
+		return url;
+	}
 
 }
