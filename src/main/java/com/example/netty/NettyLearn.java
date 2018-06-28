@@ -48,6 +48,25 @@ package com.example.netty;
  *
  *  第二章：第一个Netty程序
  *
+ *  第三章：Netty核心概念
+ *      在这一章我们将讨论Netty的 10 个核心类，清楚了解他们的结构对使用Netty很有用。可能有一些不会再工作中用到，但是也有一些很常用也很核心，你会遇到。
+ *       Bootstrap or ServerBootstrap
+         EventLoop
+         EventLoopGroup
+         ChannelPipeline
+         Channel
+         Future or ChannelFuture
+         ChannelInitializer
+         ChannelHandler
+ *   3.1 Netty Crash Course
+ *       一个Netty程序开始于 Bootstrap 类，Bootstrap类是Netty提供的一个可以通过简单配置来设置或"引导"程序的一个很重要的类。Netty中设计了 Handlers 来处理特定的"event"和设置Netty中的事件，从而来处理多个协议和数据。
+ *      Netty连接客户端端或绑定服务器需要知道如何发送或接收消息，这是通过不同类型的handlers来做的，多个Handlers是怎么配置的？   Netty提供了 ChannelInitializer 类用来配置Handlers。
+ *      Netty中所有的IO操作都是 异步执行 的，例如你连接一个主机默认是异步完成的；写入/发送消息也是同样是异步。
+ *          也就是说操作不会直接执行，而是会等一会执行，因为你不知道返回的操作结果是成功还是失败，但是需要有检查是否成功的方法或者是注册监听来通知；Netty使用Futures和ChannelFutures来达到这种目的。Future注册一个监听，当操作成功或失败时会通知。ChannelFuture封装的是一个操作的相关信息，操作被执行时会立刻返回ChannelFuture。
+ *   3.2 Channels,Events and Input/Output(IO)
+ *
+ * 注意：
+ *
  *
  */
 public class NettyLearn {
