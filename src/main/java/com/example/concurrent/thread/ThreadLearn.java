@@ -1,5 +1,9 @@
 package com.example.concurrent.thread;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadInfo;
+import java.lang.management.ThreadMXBean;
+
 /**
  * Created by MintQ on 2018/6/15.
  *
@@ -32,6 +36,16 @@ package com.example.concurrent.thread;
  *      Java的join()官方的解释: Waits for this thread to die.   等待当前线程直到当前线程结束
  *      假设现在有A、B，线程A在线程B内调用A.join()，那么线程B会被挂起，直到A线程完成后才恢复。
  *
+ *  《*》线程的生命周期： 在Java5以后，线程状态被明确定义在其公共内部枚举类型 java.lang.Thread.State中，分别是：
+ *       1、新建（NEW）: 表示线程被创建出来还没真正启动的状态，可以认为它是个Java内部状态。
+ *       2、就绪（RUNNABLE）：表示该线程已经在JVM中执行，当然由于执行需要计算资源，它可能是正在运行，也可能还在等待系统分配给它CPU时间片，在就绪队列里面排队。
+ *       3、阻塞（BLOCKED）： 这个状态和我们前面两讲介绍的同步非常相关，阻塞表示线程在等待Monitor lock。比如，线程试图通过synchronized去获取某个锁，但是其他线程已经独占了，那么当前线程就会处于阻塞状态。
+ *       4、等待（WAITING）、计时等待（TIMED_WAITING）：表示正在等待其他线程采取某些操作。一个常见的场景是类似生产者消费者模式，发现任务条件尚未满足，就让当前消费者线程等待（wait）,另外的生产者线程去准备任务数据，
+ *                                                  然后通过类似notify等动作，通知消费线程可以继续工作了。Thread.join()也会令线程进入等待状态。
+ *                                                  计时等待进入条件和等待状态类似，但是调用的是存在超时条件的方法。
+ *       5、终止（TERMINATED）：不管是意外退出还是正常执行结束，线程已经完成使命，终止运行，也有人把这个状态叫做死亡。
+ *
+ *     注意: 在其他一些分析中，会额外区分一种状态RUNNING,但是从Java API的角度，并不能表示出来。
  *
  *
  *  一、Java内存模型与线程
@@ -158,11 +172,36 @@ package com.example.concurrent.thread;
 
  *
  *
+ *  面试题1、一个线程调用两次start()方法会出现什么情况？
+ *          答：Java的线程是 不允许 启动两次的，第二次调用必然会抛出 IllegalThreadStateException，这是一种运行时异常，多次调用start被认为是编程错误。
+ *
  *
  *
  */
 public class ThreadLearn {
 
+
+    public static void main(String[] args) {
+        // 获取java线程的管理MXBean
+        ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
+        // 不需要获取同步的Monitor和synchronizer信息，仅获取线程和线程堆栈信息
+        ThreadInfo[] threadInfos = tmxb.dumpAllThreads(false, false);
+        // 遍历线程信息，打印出ID和名称
+        for (ThreadInfo info : threadInfos) {
+            System.out.println("[" + info.getThreadId() + "] " + info.getThreadName());
+        }
+
+
+        /**
+         * [1] main
+         * [2] Reference Handler
+         * [3] Finalizer    处理用户的Finalizer方法
+         * [4] Signal Dispatcher    外部jvm命令的转发器
+         * [5] Attach Listener
+         * [6] Monitor Ctrl-Break
+         *
+         */
+    }
 
 
 }
