@@ -3,6 +3,11 @@ package com.example.concurrent;
 /**
  * Created by MintQ on 2018/6/27.
  *
+ *  我们进行多线程编程，无非是达到几个目的：
+ *      1、利用多线程提高程序的扩展能力，以达到业务对吞吐量的要求。
+ *      2、协调线程间调度、交互，以完成业务逻辑。
+ *      3、线程间传递数据和状态，这同样是实现业务逻辑的需要。
+ *
  * 一、前言
  * Java 并发编程实践中的话：
     编写正确的程序并不容易，而编写正常的并发程序就更难了。相比于顺序执行的情况，多线程的线程安全问题是微妙而且出乎意料的，因为在没有进行适当同步的情况下多线程中各个操作的顺序是不可预期的。
@@ -39,6 +44,12 @@ package com.example.concurrent;
  *      JDK 中的 rt.jar 里面的 LockSupport 是个工具类，主要作用是挂起和唤醒线程，它是创建锁和其它同步类的基础。
  *
  *
+ * 《*》Java并发包提供了哪些并发工具类？
+ *      答：我们通常所说的并发包也就是java.util.concurrent及其子包，集中了Java并发的各种基础工具类，具体主要包括几个方面：
+ *          1、提供了比synchronized更加高级的各种同步结构，包括CountDownLatch、CyclicBarrier、Semaphore等，可以实现更加丰富的多线程操作，比如利用Semaphore作为资源控制器，限制同时进行工作的线程数量。
+ *          2、各种线程安全的容器，比如最常见的ConcurrentHashMap、有序的ConcurrentSkipListMap，或者通过类似快照机制，实现线程安全的动态数组CopyOnWriteArrayList等。
+ *          3、各种并发队列实现，如各种BlockedQueue实现，比较典型的ArrayBlockingQueue、SynchrousQueue或针对特定场景的PriorityBlockingQueue等。
+ *          4、强大的Executor框架，可以创建各种不同类型的线程池，调度任务运行等，绝大部分情况下，不再需要自己从头实现线程池和任务调度器。
  *
  */
 public class ConcurrentLearn {
