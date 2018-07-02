@@ -64,6 +64,10 @@ package com.example.netty;
  *      Netty中所有的IO操作都是 异步执行 的，例如你连接一个主机默认是异步完成的；写入/发送消息也是同样是异步。
  *          也就是说操作不会直接执行，而是会等一会执行，因为你不知道返回的操作结果是成功还是失败，但是需要有检查是否成功的方法或者是注册监听来通知；Netty使用Futures和ChannelFutures来达到这种目的。Future注册一个监听，当操作成功或失败时会通知。ChannelFuture封装的是一个操作的相关信息，操作被执行时会立刻返回ChannelFuture。
  *   3.2 Channels,Events and Input/Output(IO)
+ *      ~ Netty是一个非阻塞、事件驱动的网络框架。
+ *      ~下图显示一个EventLoopGroup和一个Channel关联一个单一的EventLoop，Netty中的EventLoopGroup包含一个或多个EventLoop，而EventLoop就是一个Channel执行实际工作的线程。EventLoop总是绑定一个单一的线程，在其生命周期内不会改变。
+ *      ~当注册一个Channel后，Netty将这个Channel绑定到一个EventLoop，在Channel的生命周期内总是被绑定到一个EventLoop。在Netty IO操作中，你的程序不需要同步，因为一个指定通道的所有IO始终由同一个线程来执行。
+ *      ~
  *
  * 注意：
  *
