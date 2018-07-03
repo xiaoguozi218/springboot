@@ -18,14 +18,14 @@ public class ThreadTest implements Runnable{
         ThreadTest tt = new ThreadTest();
         new Thread(tt).start();
         tt.m2();
-        System.out.println("main thread b= "+b);
+        System.out.println("main thread b= "+tt.b);
     }
 
     static void pong() {
         System.out.println("pong");
     }
 
-    static int b = 100;
+    int b = 100;
     synchronized void m1() throws InterruptedException {
         b = 1000;
         Thread.sleep(500);
@@ -33,7 +33,7 @@ public class ThreadTest implements Runnable{
     }
 
     synchronized void m2() throws InterruptedException {
-        Thread.sleep(250);
+//        Thread.sleep(250);
         b=2000;
     }
 

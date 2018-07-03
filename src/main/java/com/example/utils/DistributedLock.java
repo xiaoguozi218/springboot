@@ -17,17 +17,51 @@ import java.util.concurrent.locks.Lock;
  *
  * 基于ZooKeeper分布式锁的流程
 
- 在zookeeper指定节点（locks）下创建临时顺序节点node_n
- 获取locks下所有子节点children
- 对子节点按节点自增序号从小到大排序
- 判断本节点是不是第一个子节点，若是，则获取锁；若不是，则监听比该节点小的那个节点的删除事件
- 若监听事件生效，则回到第二步重新进行判断，直到获取到锁
- 具体实现
+     在zookeeper指定节点（locks）下创建临时顺序节点node_n
+     获取locks下所有子节点children
+     对子节点按节点自增序号从小到大排序
+     判断本节点是不是第一个子节点，若是，则获取锁；若不是，则监听比该节点小的那个节点的删除事件
+     若监听事件生效，则回到第二步重新进行判断，直到获取到锁
+     具体实现
 
- 下面就具体使用java和zookeeper实现分布式锁，操作zookeeper使用的是apache提供的zookeeper的包。
+     下面就具体使用java和zookeeper实现分布式锁，操作zookeeper使用的是apache提供的zookeeper的包。
 
- 通过实现Watch接口，实现process(WatchedEvent event)方法来实施监控，使CountDownLatch来完成监控，在等待锁的时候使用CountDownLatch来计数，等到后进行countDown，停止等待，继续运行。
- 以下整体流程基本与上述描述流程一致，只是在监听的时候使用的是CountDownLatch来监听前一个节点。
+     通过实现Watch接口，实现process(WatchedEvent event)方法来实施监控，使CountDownLatch来完成监控，在等待锁的时候使用CountDownLatch来计数，等到后进行countDown，停止等待，继续运行。
+     以下整体流程基本与上述描述流程一致，只是在监听的时候使用的是CountDownLatch来监听前一个节点。
+ *
+ *
+ *一线架构师详解 ZooKeeper 功能以及工作原理:
+ *  ZooKeeper是干啥的？~ ZooKeeper是一个 分布式协调服务，他为分布式应用提供了高效且可靠的分布式协调服务，提供了诸如统一命名空间服务，配置服务和分布式锁等分布式基础服务。
+ *
+ *  ZooKeeper基本概念:
+ *      ~集群角色:  和Paxos算法中的集群角色类型，ZooKeeper中包含Leader、Follower和Observer三个角色；
+ *                 通过一次选举过程，被选举的机器节点被称为Leader，Leader机器为客户端提供读和写服务；
+ *                 Follower和Observer是集群中的其他机器节点，唯一的区别就是：Observer不参与Leader的选举过程，也不参与写操作的过半写成功策略。
+ *      ~会话:    会话就是一个客户端与服务器之间的一个TCP长连接。客户端和服务器的一切交互都是通过这个长连接进行的；
+ *                会话会在客户端与服务器断开链接后，如果经过了设点的sessionTimeout时间内没有重新链接后失效。
+ *      ~节点:    节点在ZeeKeeper中包含两层含义：
+ *                  1、集群中的一台机器，我们成为机器节点；
+ *                  2、ZooKeeper数据模型中的 数据单元，我们成为数据节点（ZNode）。
+ *                      ZooKeeper的数据模型是内存中的一个ZNode数，由斜杠(/)进行分割的路径，就是一个ZNode，每个ZNode上除了保存自己的数据内容，还保存一系列属性信息；
+ *                      ZooKeeper中的数据节点分为两种：持久节点: 所谓的持久节点是指一旦这个ZNode创建成功，除非主动进行ZNode的移除操作，节点会一直保存在ZooKeeper上；
+ *                                                  临时节点: 而临时节点的生命周期是跟客户端的会话相关联的，一旦客户端会话失效，这个会话上的所有临时节点都会被自动移除。
+ *      ~版本: ZooKeeper为每一个ZNode节点维护一个叫做Stat的数据结构，在Stat中维护了节点相关的三个版本：
+ *              1、当前ZNode的版本 version
+ *              2、当前ZNode子节点的版本 cversion
+ *              3、当前ZNode的ACL(Access Control Lists)版本 aversion
+ *      ~监听器Watcher： ZooKeeper允许用户在指定节点上注册一些Watcher，并且在一些特定事件触发的时候，ZooKeeper会通过事件通知到感兴趣的客户端上。
+ *
+ *      ~ACL（Access Control Lists）：ZooKeeper中定义了5中控制权限： 其中 CREATE 和 DELETE 这两种权限都是针对子节点的权限控制。
+ *                                      1、CREATE：创建子节点的权限
+ *                                      2、READ：获取节点数据和子节点列表的权限
+ *                                      3、WRITE：跟新节点数据的权限
+ *                                      4、DELETE：删除子节点的权限
+ *                                      5、ADMIN：设置节点ACL的权限。
+ *
+ *  ZooKeeper的数据模型: 上面有提到ZooKeeper的数据模型是一个ZNode节点树，是一个类型与标准文件系统的层次结构，也是使用斜杠(/)进行分割.
+ *      在ZooKeeper中每一个节点都可以使用其路径唯一标识，如节点p_1的标识为：/app1/p_1
+ *      每个ZNode节点都可以存储自己的数据，还可以拥有自己的子节点目录。
+ *
  *
  *
  *
