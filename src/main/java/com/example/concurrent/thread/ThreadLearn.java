@@ -172,9 +172,19 @@ import java.lang.management.ThreadMXBean;
 
  *
  *
- *  面试题1、一个线程调用两次start()方法会出现什么情况？
+ *  面试题：
+ *  1、一个线程调用两次start()方法会出现什么情况？
  *          答：Java的线程是 不允许 启动两次的，第二次调用必然会抛出 IllegalThreadStateException，这是一种运行时异常，多次调用start被认为是编程错误。
- *
+ *  2、在Java中CycliBarriar和CountdownLatch有什么区别？   这个线程问题主要用来检测你是否熟悉JDK5中的并发包。
+ *      这两个的区别是CyclicBarrier可以重复使用已经通过的障碍，
+ *      而CountdownLatch不能重复使用。
+ *  3、什么是ThreadLocal类，怎么使用它？
+ *      ThreadLocal是一个线程级别的 局部变量，并非“本地线程”。ThreadLocal为每个使用该变量的线程提供了一个独立的变量副本，每个线程修改副本时不影响其它线程对象的副本(译者注)。
+ *      下面是线程局部变量(ThreadLocal variables)的关键点：
+ *          一个线程局部变量(ThreadLocal variables)为每个线程方便地提供了一个 单独的变量。
+ *          ThreadLocal实例通常作为静态的私有的(private static)字段出现在一个类中，这个类用来关联一个线程。
+ *          当多个线程访问ThreadLocal实例时，每个线程维护ThreadLocal提供的独立的变量副本。
+ *          常用的使用可在DAO模式中见到，当DAO类作为一个单例类时，数据库链接(connection)被每一个线程独立的维护，互不影响。(基于线程的单例)
  *
  *
  */
