@@ -26,6 +26,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 
+/**
+ *
+ * 一分钟弄懂HTTPS过程：
+ * 	在过去的几年里，业界巨头Google利用旗下Chrome浏览器大力推行HTTPS，没有使用SSL/TLS进行加密的网站一律被标记为不安全。
+ * 	作为一个开发人员，连HTTPS原理都不懂的话是注定要被鄙视的。
+ *
+ * 	简化步骤如下：1.客户端发起请求；
+ * 				2.服务端返回证书；
+ * 				3.客户端从验证证书得到服务端的公钥；
+ * 				4.客户端生成随机数，并用公钥加密后发送给服务端；
+ * 				5.服务器根据随机数生成对称密钥；
+ * 				6.用对称密钥加密数据传输；
+ *
+ */
 public class HttpUtils {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtils.class); // 日志记录
