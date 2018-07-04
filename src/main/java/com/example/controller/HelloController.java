@@ -1,7 +1,7 @@
 package com.example.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.model.Person;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by Administrator on 2018/3/31.
@@ -20,5 +20,21 @@ public class HelloController {
     public String hello() {
         return "hello,this is a springboot demo!";
     }
+
+    @RequestMapping(value = "hello/person/{id}", method = RequestMethod.GET)
+    public Person findOneperson(@PathVariable("id") Long id) {
+        Person person = new Person();
+        person.setId(id);
+        person.setName("张三");
+        return person;
+    }
+
+    @RequestMapping(value = "hello/person",method = RequestMethod.POST)
+    public void createperson(@RequestBody Person person) {
+        System.out.println(person.getName());
+        System.out.println("createperson success");
+    }
+
+
 
 }
