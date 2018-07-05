@@ -1,7 +1,11 @@
 package com.example.controller;
 
 import com.example.model.Person;
+import com.example.pattern.strategy.StrategyContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 /**
  * Created by Administrator on 2018/3/31.
@@ -35,6 +39,13 @@ public class HelloController {
         System.out.println("createperson success");
     }
 
+    @Autowired
+    private StrategyContext strategyContext;
+
+    @RequestMapping("calculatePrice")
+    public @ResponseBody BigDecimal calculatePrice(String memberLevel) {
+        return strategyContext.calculatePrice(memberLevel);
+    }
 
 
 }
