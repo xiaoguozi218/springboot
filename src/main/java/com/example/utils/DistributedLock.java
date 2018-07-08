@@ -15,6 +15,10 @@ import java.util.concurrent.locks.Lock;
 /**
  * Created by MintQ on 2018/6/4.
  *
+ * 什么是分布式？
+ *  分布式是一种 思想，是将原本的 单节点应用 分布到 不同的服务器节点，以求获得更大的运算能力和更高的性能。
+ *
+ *
  * 基于ZooKeeper分布式锁的流程
 
      在zookeeper指定节点（locks）下创建临时顺序节点node_n
@@ -31,9 +35,9 @@ import java.util.concurrent.locks.Lock;
  *
  *
  *一线架构师详解 ZooKeeper 功能以及工作原理:
- *  ZooKeeper是干啥的？~ ZooKeeper是一个 分布式协调服务，他为分布式应用提供了高效且可靠的分布式协调服务，提供了诸如统一命名空间服务，配置服务和分布式锁等分布式基础服务。
+ *  1、ZooKeeper是干啥的？~ ZooKeeper是一个 分布式协调服务，他为分布式应用提供了高效且可靠的分布式协调服务，提供了诸如统一命名空间服务，配置服务和分布式锁等分布式基础服务。
  *
- *  ZooKeeper基本概念:
+ *  2、ZooKeeper基本概念:
  *      ~集群角色:  和Paxos算法中的集群角色类型，ZooKeeper中包含Leader、Follower和Observer三个角色；
  *                 通过一次选举过程，被选举的机器节点被称为Leader，Leader机器为客户端提供读和写服务；
  *                 Follower和Observer是集群中的其他机器节点，唯一的区别就是：Observer不参与Leader的选举过程，也不参与写操作的过半写成功策略。
@@ -58,9 +62,20 @@ import java.util.concurrent.locks.Lock;
  *                                      4、DELETE：删除子节点的权限
  *                                      5、ADMIN：设置节点ACL的权限。
  *
- *  ZooKeeper的数据模型: 上面有提到ZooKeeper的数据模型是一个ZNode节点树，是一个类型与标准文件系统的层次结构，也是使用斜杠(/)进行分割.
+ *  3、ZooKeeper的数据模型: 上面有提到ZooKeeper的数据模型是一个ZNode节点树，是一个类型与标准文件系统的层次结构，也是使用斜杠(/)进行分割.
  *      在ZooKeeper中每一个节点都可以使用其路径唯一标识，如节点p_1的标识为：/app1/p_1
  *      每个ZNode节点都可以存储自己的数据，还可以拥有自己的子节点目录。
+ *
+ *  4、ZooKeeper 实现： 作为一个 coordination，非常重要的就是高可用和数据可靠性，我们来看下如何实现的。
+ *      先来看数据的写入过程：
+ *          1、客户端提交写请求
+ *          2、follower写请求交给leader，由leader作为整个事务的协调者，负责整个写入过程
+ *          3、leader在整个事务中是通过ZAB算法保证了数据的最终一致，由leader发起 事务提议（重点是一个zxid，全局递增的一个id生成器，通过zxid来达到全局时钟的效果）
+ *          4、follower接收到leader发起的事务提议，返回收到（所有请求都是在一个FIFO的队列中）
+ *          5、leader在收到follower的回复后，提交本次事务
+ *          6、客户端收到回复
+ *
+ *  5、
  *
  *
  *
