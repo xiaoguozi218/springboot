@@ -68,6 +68,23 @@ package com.example.netty;
  *      ~下图显示一个EventLoopGroup和一个Channel关联一个单一的EventLoop，Netty中的EventLoopGroup包含一个或多个EventLoop，而EventLoop就是一个Channel执行实际工作的线程。EventLoop总是绑定一个单一的线程，在其生命周期内不会改变。
  *      ~当注册一个Channel后，Netty将这个Channel绑定到一个EventLoop，在Channel的生命周期内总是被绑定到一个EventLoop。在Netty IO操作中，你的程序不需要同步，因为一个指定通道的所有IO始终由同一个线程来执行。
  *      ~
+ *   3.3 什么是Bootstrap?为什么使用它？—— “引导”是Netty中配置程序的过程，当你需要连接客户端或服务器绑定指定端口时需要使用bootstrap。
+ *      ~“引导”有两种类型：一种是用于客户端的Bootstrap(也适用于DatagramChannel)
+ *                       一种是用于服务端的ServerBootstrap
+ *      ~Bootstrap和ServerBootstrap之间的差异：
+ *          Bootstrap用来连接远程主机，有1个EventLoopGroup
+ *          ServerBootstrap用来绑定本地端口，有2个EventLoopGroup
+ *      ~EventLoopGroup和EventLoop是什么关系？
+ *          EventLoopGroup可以包含很多个EventLoop，每个Channel绑定一个EventLoop不会被改变，因为EventLoopGroup包含少量的EventLoop的Channels，很多Channel会共享同一个EventLoop。这意味着在一个Channel保持EventLoop繁忙会禁止其他Channel绑定到相同的EventLoop。
+ *          我们可以理解为EventLoop是一个事件循环线程，而EventLoopGroup是一个事件循环集合。
+ *      ~Netty允许处理IO和接受连接使用同一个EventLoopGroup，这在实际中适用于多种应用。
+ *    3.4 Channel Handlers and Data Flow(通道处理和数据流)
+ *      ~要明白Netty程序wirte或read时发生了什么，首先要对Handler是什么有一定的了解。
+ *         在很多地方，Netty的ChannelHandler是你的应用程序中处理最多的。
+ *         那么ChannelHandler究竟是什么？给ChannelHandler一个定义不容易，我们可以理解为ChannelHandler是一段执行业务逻辑处理数据的代码，它们来来往往的通过ChannelPipeline。
+ *         实际上，ChannelHandler是定义一个handler的父接口，ChannelInboundHandler和ChannelOutboundHandler都实现ChannelHandler接口
+ *
+ *
  *
  * 注意：
  *
