@@ -22,6 +22,11 @@ public class HelloController {
 
     @RequestMapping("/hello")
     public String hello() {
+        try {
+            Thread.sleep(500L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return "hello,this is a springboot demo!";
     }
 
