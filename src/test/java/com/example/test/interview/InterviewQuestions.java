@@ -23,6 +23,11 @@ package com.example.test.interview;
  *          5、MANDATORY：    必须在一个已有的事务中执行,否则抛出异常
  *          6、NEVER：        必须在一个没有的事务中执行,否则抛出异常(与Propagation.MANDATORY相反)
  *
+ *    3、你对spring的理解是什么?
+ *           1)开源框架
+             2)IoC（控制反转）实现了低耦合，将类的创建和依赖关系写在配置文件里，由配置文件注入，
+             3)AOP (面向切面编程) 提高了复用性，将安全，事务等于程序逻辑相对独立的功能抽取出来，利用Spring的配置文件将这些功能插进去，实现了面向切面编程。
+ *
  * 《*》负载均衡、集群相关
  *     1、Nginx+Tomcat+Redis实现负载均衡、资源分离、session共享
  *
