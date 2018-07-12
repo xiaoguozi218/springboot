@@ -98,7 +98,18 @@ package com.example.netty;
  *                                                           - 当没有 I/O 处理时，线程可以被重定向到其他任务上。
  *     1、Netty 介绍：- Netty 是一个广泛使用的 Java 网络编程框架。
  *
- *     2、构成部分：-
+ *     2、构成部分：- Channel、Callback (回调)、Future、Event 和 Handler
+ *          ~FUTURE, CALLBACK 和 HANDLER
+ *              ~Netty 的 异步编程模型 是建立在 future 和 callback 的概念上的。
+ *              ~一个 Netty 的设计的主要目标是促进“关注点分离”:你的 业务逻辑 从 网络基础设施应用程序中分离。
+ *          ~SELECTOR, EVENT 和 EVENT LOOP
+ *              ~Netty 通过触发事件从应用程序中抽象出 Selector，从而避免手写调度代码。EventLoop 分配给每个 Channel 来处理所有的事件，包括：
+ *                  ~注册感兴趣的事件
+ *                  ~调度事件到 ChannelHandler
+ *                  ~安排进一步行动
+ *              ~该 EventLoop 本身是由只有一个线程驱动，它给一个 Channel 处理所有的 I/O 事件，并且在 EventLoop 的生命周期内不会改变。
+ *                  这个简单而强大的线程模型消除你可能对你的 ChannelHandler 同步的任何关注，这样你就可以专注于提供正确的回调逻辑来执行。
+ *   二、第一个Netty应用
  *
  *
  * 注意：
