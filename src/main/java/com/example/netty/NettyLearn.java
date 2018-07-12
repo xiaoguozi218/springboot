@@ -27,8 +27,6 @@ package com.example.netty;
  *           5．最后调用NIO线程组的shutdownGracefully进行优雅退出，它会释放跟shutdownGracefully相关联的资源。
  *
  *
- *
- *
  *  TCP拆包和粘包的问题解决：
  *      问题：在基于流的传输里比如TCP/IP，接收到的数据会先被存储到一个socket接收缓冲里。不幸的是，基于流的传输并不是一个数据包队列，而是一个字节队列。
  *           即使你发送了2个独立的数据包，操作系统也不会作为2个消息处理，而仅仅是作为一连串的字节而言。因此这是不能保证你远程写入的数据就会准确地读取。
@@ -110,6 +108,51 @@ package com.example.netty;
  *              ~该 EventLoop 本身是由只有一个线程驱动，它给一个 Channel 处理所有的 I/O 事件，并且在 EventLoop 的生命周期内不会改变。
  *                  这个简单而强大的线程模型消除你可能对你的 ChannelHandler 同步的任何关注，这样你就可以专注于提供正确的回调逻辑来执行。
  *   二、第一个Netty应用
+ *      ~总结：在本章中，您构建并运行你的第一 个Netty 的客户端和服务器。虽然这是一个简单的应用程序，它可以扩展到几千个并发连接。
+ *
+ *  三、Netty 总览
+ *      ~本章主要了解 Netty 的架构模型，核心组件包括：
+ *          - Bootstrap 和 ServerBootstrap
+ *          - Channel
+ *          - ChannelHandler
+ *          - ChannelPipeline
+ *          - ChannelFuture
+ *          - EventLoop （事件循环）
+ *      1、Netty 快速入门
+ *          ~Bootstrap - Netty 应用程序通过设置 bootstrap（引导）类的开始，该类提供了一个 用于应用程序网络层配置的容器。
+ *          ~Channel - 底层网络传输 API 必须提供给应用 I/O操作的接口，如读，写，连接，绑定等等。对于我们来说，这是结构几乎总是会成为一个“socket”。
+ *                   - Netty 中的接口 Channel 定义了与 socket 丰富交互的操作集：bind, close, config, connect, isActive, isOpen, isWritable, read, write 等等。
+ *          ~ChannelHandler - ChannelHandler 支持很多协议，并且提供用于 数据处理的容器。我们已经知道 ChannelHandler 由特定事件触发。
+ *                          - ChannelHandler 可专用于几乎所有的动作，包括将一个对象转为字节（或相反），执行过程中抛出的异常处理。
+ *                          - 常用的一个接口是 ChannelInboundHandler，这个类型接收到入站事件（包括接收到的数据）可以处理应用程序逻辑。当你需要提供响应时，你也可以从 ChannelInboundHandler 冲刷数据。
+ *                            一句话，业务逻辑经常存活于一个或者多个 ChannelInboundHandler。
+ *          ~ChannelPipeline - ChannelPipeline 提供了一个容器给 ChannelHandler 链并提供了一个API 用于管理沿着链入站和出站事件的流动。
+ *                           - 每个 Channel 都有自己的ChannelPipeline，当 Channel 创建时自动创建的。
+ *                           - ChannelHandler 是如何安装在 ChannelPipeline？- 主要是实现了ChannelHandler 的抽象 ChannelInitializer。ChannelInitializer子类 通过 ServerBootstrap 进行注册。当它的方法 initChannel() 被调用时，这个对象将安装自定义的 ChannelHandler 集到 pipeline。当这个操作完成时，ChannelInitializer 子类则 从 ChannelPipeline 自动删除自身。
+ *          ~ChannelFuture - Netty 所有的 I/O 操作都是异步。因为一个操作可能无法立即返回，我们需要有一种方法在以后确定它的结果。
+ *                         - 出于这个目的，Netty 提供了接口 ChannelFuture,它的 addListener 方法注册了一个 ChannelFutureListener ，当操作完成时，可以被通知（不管成功与否）。
+ *          ~EventLoop - EventLoop 用于处理 Channel 的 I/O 操作。一个单一的 EventLoop通常会处理多个 Channel 事件。
+ *                     - 一个 EventLoopGroup 可以含有多于一个的 EventLoop 和 提供了一种迭代用于检索清单中的下一个。
+ *
+ *      2、Channel, Event 和 I/O - Netty 是一个非阻塞、事件驱动的网络框架。
+ *          ~Netty 实际上是使用 Threads（多线程）处理 I/O 事件，对于熟悉多线程编程的读者可能会需要关注 同步代码。这样的方式不好，因为同步会影响程序的性能，Netty 的设计保证程序处理事件不会有同步。
+ *          ~这就是为什么你的应用程序 不需要同步 Netty 的 I/O操作 - 所有 Channel 的 I/O 始终用 相同的线程 来执行。
+ *
+ *      3、什么是 Bootstrapping 为什么要用 - 不管程序使用哪种协议，无论是创建一个客户端还是服务器都需要使用“引导”
+ *          ~Bootstrapping（引导） 是 Netty 中配置程序的过程，当你需要连接客户端或服务器 绑定指定端口 时需要使用 Bootstrapping。
+ *          ~Bootstrapping 有两种类型：- 一种是用于客户端的Bootstrap        - 用来连接远程主机，有1个EventLoopGroup
+ *                                   - 一种是用于服务端的ServerBootstrap  - 用来绑定本地端口，有2个EventLoopGroup
+ *      4、ChannelHandler 和 ChannelPipeline -关系： ChannelPipeline 是 ChannelHandler 链的容器。
+ *          ~在许多方面的 ChannelHandler 是在您的应用程序的核心，尽管有时它 可能并不明显。ChannelHandler 支持广泛的用途，使它难以界定。因此，最好是把它当作一个通用的 容器，处理进来的事件（包括数据）并且通过ChannelPipeline。
+ *          ~Netty 中有两个方向的数据流 - 入站(ChannelInboundHandler) 和 出站(ChannelOutboundHandler)
+ *          ~当 ChannelHandler 被添加到的 ChannelPipeline 它得到一个 ChannelHandlerContext，它代表一个 ChannelHandler 和 ChannelPipeline 之间的“绑定”。它通常是安全保存对此对象的引用，除了当协议中的使用的是不面向连接（例如，UDP）。而该对象可以被用来获得 底层 Channel,它主要是用来写出站数据。
+ *          ~还有，实际上，在 Netty 发送消息有两种方式。您可以直接写消息给 Channel 或写入 ChannelHandlerContext 对象。主要的区别是， 前一种方法会导致消息从 ChannelPipeline的尾部开始，而 后者导致消息从 ChannelPipeline 下一个处理器开始。
+ *      5、近距离观察 ChannelHandler -
+ *          下面解释下三个 ChannelHandler 的子类型：编码器、解码器以及 ChannelInboundHandlerAdapter 的子类 SimpleChannelInboundHandler
+ *              ~编码器 - 如果该消息是出站会发生：“编码”，从一个Java对象转为字节。
+ *              ~解码器 - 入站消息将从字节转为一个Java对象;也就是说，“解码”。
+ *              ~SimpleChannelHandler
+ *
  *
  *
  * 注意：
