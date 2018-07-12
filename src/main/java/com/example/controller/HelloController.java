@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import com.example.annotation.MyLog;
 import com.example.model.Person;
 import com.example.pattern.strategy.StrategyContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ public class HelloController {
 
 
     @RequestMapping("/hello")
+    @MyLog("测试")
     public String hello() {
         try {
             Thread.sleep(500L);
