@@ -18,7 +18,7 @@ public class BinarySearch {
 
 
     /*
-     * 循环实现二分查找算法arr 已排好序的数组x 需要查找的数-1 无法查到数据
+     * 循环实现二分查找算法 arr 已排好序的数组、 x 需要查找的数、 -1 无法查到数据
      */
     public static int binarySearch(int[] arr, int x) {
         int low = 0;
