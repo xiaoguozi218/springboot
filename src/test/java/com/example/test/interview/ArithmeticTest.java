@@ -73,15 +73,51 @@ public class ArithmeticTest {
         arr[i] = temp;
     }
 
+    //二分法查找 - 循环
+    public static int binarySearch(int[] arr , int x) {
+        int begin = 0;
+        int end = arr.length-1;
+        while (begin <= end) {
+            int middle = (begin+end)/2;
+            if (x == arr[middle]) {
+                return middle;
+            } else if (x < arr[middle]) {
+                return end = middle - 1;
+            } else {
+                return begin = middle+1;
+            }
+        }
+        return -1;
+    }
+
+    //二分法查找 - 递归
+    public static int binarySearch(int[] arr,int data,int begin,int end) {
+        int middle = (begin+end)/2;
+        if (begin>end ||data<arr[begin] || data>arr[end]) {
+            return -1;
+        }
+        if (data<arr[middle]) {
+            return binarySearch(arr,data,begin,middle-1);
+        } else if (data > arr[middle]) {
+            return binarySearch(arr, data, middle + 1, end);
+        } else {
+            return middle;
+        }
+
+    }
 
     public static void main(String[] args) {
         int[] arr = {3,5,2,8,6,9,1};
 //        bubbleSort(arr);
 //        selectSort(arr);
-        quickSort(arr,0,arr.length-1);
-        for (int i = 0; i < arr.length; i++) {
-            System.err.print(i+",");
-        }
+//        quickSort(arr,0,arr.length-1);
+//        for (int i = 0; i < arr.length; i++) {
+//            System.err.print(i+",");
+//        }
+
+        int[] array = { 6, 12, 33, 87, 90, 97, 108, 561 };
+        System.out.println("循环查找：" + (binarySearch(array, 87) ));
+        System.out.println("递归查找"+binarySearch(array,87,3,array.length-1));
     }
 
 }
