@@ -153,6 +153,8 @@ package com.example.netty;
  *              ~解码器 - 入站消息将从字节转为一个Java对象;也就是说，“解码”。
  *              ~SimpleChannelHandler
  *
+ *  四、核心功能
+ *      1、Transport - 本章将涵盖很多 transport(传输)，他们的用例以及 API: - NIO、OIO、Local(本地)、Embedded(内嵌)
  *
  *
  * 注意：
