@@ -59,4 +59,10 @@ package com.example.test.interview;
  */
 public class InterviewQuestions {
 
+    public static void main(String[] args) {
+        Integer t1 = 1;
+        Integer t2 = 1;
+        System.out.println(t1 == t2);   //true
+    }
+
 }
