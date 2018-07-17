@@ -76,6 +76,15 @@ package com.example.netty.dubbo;
  *             2、RPC 框架的 职责 是： 让调用方感觉 就像调用本地函数一样 调用远端函数、让服务提供方感觉就像实现一个本地函数一样来实现服务
  *
  *
+ * 《*》Dubbo序列化： 默认是hessian2
+ *  在Dubbo RPC中，同时支持多种序列化方式：
+ *      - （1）dubbo序列化，阿里尚不成熟的java序列化实现。
+ *      - （2）hessian2序列化：hessian是一种跨语言的高效二进制的序列化方式，但这里实际不是原生的hessian2序列化，而是阿里修改过的hessian lite，它是dubbo RPC 默认启用 的序列化方式。
+ *      - （3）json序列化：目前有两种实现，一种是采用的阿里的fastjson库，另一种是采用dubbo中自已实现的简单json库，一般情况下，json这种文本序列化性能不如二进制序列化。
+ *      - （4）java序列化：主要是采用JDK自带的java序列化实现，性能很不理想。
+ *
+ *    另外还有专门针对Java语言的 Kryo，FST，及跨语言的Protostuff、ProtoBuf，Thrift，Avro等。
+ *
  */
 public class DubboLearn {
 
