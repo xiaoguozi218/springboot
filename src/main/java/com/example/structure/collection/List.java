@@ -1,4 +1,4 @@
-package com.example.structure.list;
+package com.example.structure.collection;
 
 /**
  * Created by MintQ on 2018/6/12.
