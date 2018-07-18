@@ -11,6 +11,43 @@ package com.example.mq.kafka;
  *  (3)、无论是Kafka集群，还是Producer和Consumer都依赖于zookeeper集群保存一些meta信息，来保证系统可用性。
  *
  *
+ *《简谈Kafka中的NIO网络通信模型》：1 + N + M
+ *  一、 Kafka的网络通信模型是基于NIO的 Reactor 多线程模型来设计的。这里先引用Kafka源码中注释的一段话：An NIO socket server. The threading model is 1 Acceptor thread that handles new connections.
+             Acceptor has N Processor threads that each have their own selector and read requests from sockets.
+             M Handler threads that handle requests and produce responses back to the processor threads for writing.
+ *  - Kafka的网络通信层模型，主要采用了1（1个Acceptor线程）+N（N个Processor线程）+M（M个业务处理线程）。
+ *                              线程数	        线程名	            线程具体说明
+                                 1	kafka-socket-acceptor_%x	Acceptor线程，负责监听Client端发起的请求
+                                 N	kafka-network-thread_%d	    Processor线程，负责对Socket进行读写
+                                 M	kafka-request-handler-_%d	Worker线程，处理具体的业务逻辑并生成Response返回
+ *  二、 这里可以简单总结一下其网络通信模型中的几个重要概念：
+ *    (1) Acceptor：1个接收线程，负责监听新的连接请求，同时注册OPACCEPT 事件，将新的连接按照"round robin"方式交给对应的 Processor 线程处理；
+ *    (2) Processor：N个处理器线程，其中每个 Processor 都有自己的 selector，它会向 Acceptor 分配的 SocketChannel 注册相应的 OPREAD 事件，N 的大小由“num.networker.threads”决定；
+ *    (3) KafkaRequestHandler：M个请求处理线程，包含在线程池—KafkaRequestHandlerPool内部，
+ *                            从RequestChannel的全局请求队列—requestQueue中获取请求数据并交给KafkaApis处理，M的大小由“num.io.threads”决定；
+ *    (4) RequestChannel：其为Kafka服务端的请求通道，该数据结构中包含了一个全局的请求队列 requestQueue和多个与Processor处理器相对应的响应队列responseQueue，
+ *                        提供给Processor与请求处理线程KafkaRequestHandler和KafkaApis交换数据的地方；
+ *    (5) NetworkClient：其底层是对 Java NIO 进行相应的封装，位于Kafka的网络接口层。Kafka消息生产者对象—KafkaProducer的send方法主要调用NetworkClient完成消息发送；
+ *    (6) SocketServer：其是一个NIO的服务，它同时启动一个Acceptor接收线程和多个Processor处理器线程。提供了一种典型的Reactor多线程模式，将接收客户端请求和处理请求相分离；
+ *    (7) KafkaServer：代表了一个Kafka Broker的实例；其startup方法为实例启动的入口；
+ *    (8) KafkaApis：Kafka的业务逻辑处理Api，负责处理不同类型的请求；比如“发送消息”、“获取消息偏移量—offset”和“处理心跳请求”等；
+ *
+ *  1、SocketServer
+ *      - SocketServer是接收 客户端Socket 请求连接、处理请求并返回处理结果的 核心类，Acceptor及Processor的初始化、处理逻辑都是在这里实现的。
+ *
+ *  2、Acceptor
+ *      - Acceptor是一个继承自抽象类AbstractServerThread的线程类。
+ *      - Acceptor的主要任务是监听并且接收客户端的请求，同时建立数据传输通道—SocketChannel，
+ *        然后以轮询的方式交给一个后端的Processor线程处理（具体的方式是添加socketChannel至并发队列并唤醒Processor线程处理）。
+ *  3、Processor
+ *      - Processor同Acceptor一样，也是一个线程类，继承了抽象类AbstractServerThread。其主要是从客户端的请求中读取数据和将KafkaRequestHandler处理完响应结果返回给客户端。
+ *  4、RequestChannel
+ *      - 在Kafka的网络通信层中，RequestChannel为Processor处理器线程与KafkaRequestHandler线程之间的数据交换提供了一个数据缓冲区，是通信过程中Request和Response缓存的地方。
+ *  5、KafkaRequestHandler
+ *      - KafkaRequestHandler也是一种线程类，在KafkaServer实例启动时候会实例化一个线程池—KafkaRequestHandlerPool对象（包含了若干个KafkaRequestHandler线程），这些线程以守护线程的方式在后台运行。
+ *  6、KafkaApis
+ *      - KafkaApis是用于处理对通信网络传输过来的业务消息请求的中心转发组件。该组件反映出Kafka Broker Server可以提供哪些服务。
+ *
  *
  * 查漏补缺：
  *  1、segment达到一定的大小（可以通过配置文件设定,默认 1G ）后将不会再往该segment写数据，broker会创建新的segment。
