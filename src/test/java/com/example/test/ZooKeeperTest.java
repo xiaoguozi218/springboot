@@ -19,7 +19,7 @@ public class ZooKeeperTest {
             public void run() {
                 DistributedLock lock = null;
                 try {
-                    lock = new DistributedLock("120.77.46.159:2181", "test1");
+                    lock = new DistributedLock("39.106.28.244:2181", "test1");
                     lock.lock();
                     secskill();
                     System.out.println(Thread.currentThread().getName() + "正在运行");

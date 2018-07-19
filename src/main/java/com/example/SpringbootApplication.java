@@ -8,11 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableRetry    //入口类上开启retry的拦截，使用@EnableRetry注解。
 //@ServletComponentScan	//这里关键是要在启动类上加上注解@ServletComponentScan
 @EnableAspectJAutoProxy	//添加对aspect的支持
+@EnableScheduling //定时任务注解
 public class SpringbootApplication implements CommandLineRunner{
 
 	public static void main(String[] args) {

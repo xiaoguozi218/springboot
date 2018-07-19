@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,6 +28,9 @@ public class RedisService {
 
     @Autowired
     private StringRedisTemplate rt;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 当前key是否存在
@@ -147,6 +153,31 @@ public class RedisService {
                 return serializer.deserialize(res);
             }
         });
+        return result;
+    }
+
+
+    /**
+     * 删除key的value
+     * @param key
+     */
+    public void del(final String key){
+        rt.execute(new RedisCallback<Object>(){
+            @Override
+            public Long doInRedis(RedisConnection connection) throws DataAccessException {
+                return connection.del(key.getBytes());
+            }
+        });
+    }
+
+    public boolean setScheduler(final String key, Object value) {
+        boolean result = false;
+        try {
+            ValueOperations<Serializable, Object> operations = redisTemplate.opsForValue();
+            return operations.setIfAbsent(key, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
