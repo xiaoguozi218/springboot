@@ -1,5 +1,7 @@
 package com.example.structure.collection;
 
+import java.util.LinkedList;
+
 /**
  * Created by MintQ on 2018/6/12.
  *
@@ -28,9 +30,20 @@ package com.example.structure.collection;
  *      LinkedList可以当作队列和栈使用，当然我们也可以进一步封装
  *      尽量不使用Vector和Stack，同步场景下，使用SynchronizedList替代
  *
+ *《LinkedList 源码解读 》: - LinkedList是一个实现了List接口和Deque接口的双向链表。
+ *  1、源码解读：
+ *     - LinkedList内部是一个双端链表结构，有两个变量，first指向链表头部，last指向链表尾部。
+ *     - Node类LinkedList的 静态内部类。
+ *     - 添加操作 ：因为LinkedList即实现了List接口，又实现了Deque接口，所以LinkedList既可以添加将元素添加到尾部，也可以将元素添加到指定索引位置，还可以添加添加整个集合；
+ *                 另外既可以在头部添加，又可以在尾部添加。下面我们分别从List接口和Deque接口分别介绍。
+ *
+ *  2、LinkedList不是线程安全的，如果想使LinkedList变成线程安全的，可以使用如下方式：
+ *      List list=Collections.synchronizedList(new LinkedList(...));
+ *
+ *  注意：iterator()和listIterator()返回的迭代器都遵循fail-fast机制。
+ *
  *
  */
 public class List {
-
 
 }
