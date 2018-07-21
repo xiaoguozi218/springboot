@@ -23,12 +23,22 @@ package com.example.test.interview;
  *          5、MANDATORY：    必须在一个已有的事务中执行,否则抛出异常
  *          6、NEVER：        必须在一个没有的事务中执行,否则抛出异常(与Propagation.MANDATORY相反)
  *
- *    3、你对spring的理解是什么?
+ *    3、你对spring的理解是什么? - 我们可以认为Spring是一个超级粘合平台
  *           1)开源框架
-             2)IoC（控制反转）实现了低耦合，将类的创建和依赖关系写在配置文件里，由配置文件注入 - 把Bean的创建和注入都交给Spring容器来管理，你只管开发和配置Bean即可。
+             2)IoC（控制反转）实现了低耦合 - 把Bean的 创建和注入 都交给Spring容器来管理，你只管开发和配置Bean即可。
              3)AOP (面向切面编程) 提高了复用性，将安全，事务等于程序逻辑相对独立的功能抽取出来，利用Spring的配置文件将这些功能插进去，实现了面向切面编程。
+ *      IOC - Spring的最基本的功能就是创建对象及管理这些对象(Bean)之间的依赖关系，实现低耦合、高内聚。
+ *      AOP - 还提供像通用日志记录、性能统计、安全控制、异常处理、数据库事务等面向切面的能力。
  *
- *    4、MyBatis中#{}与${}的区别：
+ *   4、 Spring启动流程：- spring的启动过程其实就是其IoC容器的启动过程，对于web程序，IoC容器启动过程即是建立上下文的过程。
+ *      1.首先，对于一个web应用，其部署在web容器中，web容器提供其一个全局的上下文环境，这个上下文就是 ServletContext，其为后面的spring IoC容器提供宿主环境；
+ *      2.其次，在web.xml中会提供有contextLoaderListener。在web容器启动时，会触发容器初始化事件，此时 contextLoaderListener 会监听到这个事件，其 contextInitialized方法会被调用，
+ *        在这个方法中，spring会初始化一个启动上下文，这个上下文被称为根上下文，即WebApplicationContext，这是一个接口类，确切的说，其实际的实现类是 XmlWebApplicationContext。
+ *        这个就是spring的IoC容器，其对应的Bean定义的配置由web.xml中的 context-param标签指定。在这个IoC容器初始化完毕后，spring以WebApplicationContext.ROOTWEBAPPLICATIONCONTEXTATTRIBUTE为属性Key，将其存储到ServletContext中，便于获取；
+ *      3.再次，contextLoaderListener 监听器初始化完毕后，开始初始化web.xml中配置的Servlet，这里是 DispatcherServlet，这个servlet实际上是一个标准的前端控制器，用以转发、匹配、处理每个servlet请 求。
+ *        DispatcherServlet上下文在初始化的时候会建立自己的IoC上下文，用以持有spring mvc相关的bean。
+ *
+ *   5、MyBatis中#{}与${}的区别：
  *      - #方式能够很大程度防止sql注入 - #{} 在预处理时，会把参数部分用一个占位符 ? 代替 - #{} 的参数替换是发生在 DBMS 中，而 ${} 则发生在动态解析过程中。
  *      - $方式无法防止Sql注入
  *      - 一般能用#的就别用$

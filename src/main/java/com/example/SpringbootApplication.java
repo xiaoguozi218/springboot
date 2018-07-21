@@ -33,3 +33,19 @@ public class SpringbootApplication implements CommandLineRunner{
 
 
 }
+/**
+ *
+ *《Spring Boot启动流程详解》：1、构建SpringApplication对象。 2、执行run()
+ *
+ * 	一、构建 SpringApplication对象
+ *
+ *
+ *
+ *	总结：整个SpringApplication初始化的过程，就是初始化了
+ *		1、一个包含入参SpringbootApplication.class的sources的Set<Object>
+ *		2、一个当前环境是否是web环境的 boolean webEnvironment
+ *		3、一个包含4个 ApplicationContextInitializer 实例的List
+ *		4、一个包含8个 ApplicationListener实例的List
+ *		5、一个main方法所在的主类的Class对象。
+ *
+ */
