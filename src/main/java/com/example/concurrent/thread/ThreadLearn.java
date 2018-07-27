@@ -3,6 +3,7 @@ package com.example.concurrent.thread;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+import java.util.concurrent.*;
 
 /**
  * Created by MintQ on 2018/6/15.
@@ -167,7 +168,6 @@ import java.lang.management.ThreadMXBean;
  *                         newScheduledThreadPool   创建一个定长线程池，支持定时及周期性任务执行。
  *                         newSingleThreadExecutor  创建一个单线程化的线程池，它只会用唯一的工作线程来执行任务，保证所有任务按照指定顺序（FIFO、LIFO、优先级）执行。
  *
- *
  *  为了保证共享数据的完整性，Java中引入了互斥锁的概念，即每个对象对应一个“互斥锁”的标记（monitor），用来保证任何时刻只能有一个线程访问该对象。利用Java中每个对象都拥有唯一的一个监视锁（monitor），当线程拥有这个标记时才会允许访问这个资源，而未拿到标记则进入阻塞，进入锁池。每个对象都有自己的一个锁池的空间，用于存放等待线程。由系统决定哪个线程拿到锁标记并运行。
  *
  *
@@ -186,6 +186,27 @@ import java.lang.management.ThreadMXBean;
                  wait():使当前执行代码的线程放弃monitor并进入等待状态，直到接收到通知或被中断为止（notify）。即此时线程将释放自己的所有锁标记和CPU占用，同时进入这个对象的等待池（阻塞状态）。只能在同步代码块中调用（synchronized）；
                  notify():在等待池中随机唤醒一个线程，放入锁池，对象处于等待状态，直到获取对象的锁标记为止。 只能在同步代码块中调用（synchronized）。
 
+ *
+ * 七、Java并发之 Executor 框架：
+ *  - Executor框架简介：Java的线程既是工作单元，也是执行机制。从JDK5开始，把工作单元和执行机制分离开来。
+ *      Executor框架由3大部分组成任务：1、被执行任务需要实现的接口：Runnable接口或Callable接口。
+ *                                 2、异步计算的结果。Future接口和FutureTask类。
+ *                                 3、任务的执行。两个关键类ThreadPoolExecutor和SeheduledThreadPoolExecutor ？。
+ *  - 概念介绍：
+ *    - Runnable与Callable的区别：(1)Callable规定的方法是call(),Runnable规定的方法是run().
+ *                              (2)Callable的任务执行后可返回值，而Runnable的任务是不能返回值的
+ *                              (3)call方法可以抛出异常，run方法不可以
+ *                              (4)运行Callable任务可以拿到一个Future对象，Future 表示异步计算的结果。
+ *    - Future接口:Future接口代表 异步计算的结果，通过Future接口提供的方法可以查看异步计算是否执行完成，或者等待执行结果并获取执行结果，同时还可以取消执行。
+ *
+ *    - 任务的执行机制:
+ *      - ThreadPoolExecutor: ThreadPoolExecutor是Executor框架最核心的类，是线程池的实现类。
+ *          核心配置参数包括: - corePoolSize：核心线程池的大小
+ *                         - maximumPoolSize：最大线程池的大小
+ *                         - BlockingQueue：暂时保存任务的工作队列
+ *                         - RejectedExecutionHandler：当ThreadPoolExecutor已经饱和时（达到了最大线程池大小且工作队列已满）将执行的Handler。
+ *
+ *
  *
  *
  *  面试题：
@@ -207,17 +228,15 @@ import java.lang.management.ThreadMXBean;
 public class ThreadLearn {
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
         // 获取java线程的管理MXBean
-        ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
-        // 不需要获取同步的Monitor和synchronizer信息，仅获取线程和线程堆栈信息
-        ThreadInfo[] threadInfos = tmxb.dumpAllThreads(false, false);
-        // 遍历线程信息，打印出ID和名称
-        for (ThreadInfo info : threadInfos) {
-            System.out.println("[" + info.getThreadId() + "] " + info.getThreadName());
-        }
-
-
+//        ThreadMXBean tmxb = ManagementFactory.getThreadMXBean();
+//        // 不需要获取同步的Monitor和synchronizer信息，仅获取线程和线程堆栈信息
+//        ThreadInfo[] threadInfos = tmxb.dumpAllThreads(false, false);
+//        // 遍历线程信息，打印出ID和名称
+//        for (ThreadInfo info : threadInfos) {
+//            System.out.println("[" + info.getThreadId() + "] " + info.getThreadName());
+//        }
         /**
          * [1] main
          * [2] Reference Handler
@@ -227,6 +246,52 @@ public class ThreadLearn {
          * [6] Monitor Ctrl-Break
          *
          */
+        //一个使用Callable的简单例子
+        callableTest();
+
+
+    }
+
+    public static void callableTest() throws InterruptedException, ExecutionException {
+        final ExecutorService executorService = Executors.newFixedThreadPool(5);
+        Callable call = new Callable() {
+            @Override
+            public Object call() throws Exception {
+                Thread.sleep(5000); //休眠指定的时间，此处表示该操作比较耗时
+                return  "Other less important but longtime things.";
+            }
+        };
+
+        Future task = executorService.submit(call);
+
+        //重要的事情
+
+        System.out.println("Let's do important things. start");
+
+        Thread.sleep(1000 * 3);
+
+        System.out.println("Let's do important things. end");
+
+        //不重要的事情
+
+        while(!task.isDone()){
+
+            System.out.println("still waiting....");
+
+            Thread.sleep(1000 * 1);
+
+        }
+
+        System.out.println("get sth....");
+
+        String obj = (String) task.get();
+
+        System.out.println(obj);
+
+        //关闭线程池
+
+        executorService.shutdown();
+
     }
 
 
