@@ -1,5 +1,8 @@
 package com.example.concurrent;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * Created by MintQ on 2018/6/27.
  *
@@ -125,10 +128,53 @@ package com.example.concurrent;
  *          - 2、循环时间长开销大 - 自旋CAS（也就是不成功就一直循环执行直到成功）如果长时间不成功，会给CPU带来非常大的执行开销。
  *          - 3、只能保证一个共享变量的原子操作 - CAS 只对单个共享变量有效，当操作涉及跨多个共享变量时 CAS 无效。
  *
+ *《java高并发总结-锁-常用于面试复习》
+ *  1、定义 -
+ *      独占锁：它是一种悲观保守的加锁策略，它避免了读/读冲突，如果某个只读线程获取锁，则其他读线程都只能等待，这种情况下就限制了不必要的并发性，因为读操作并不会影响数据的一致性。
+ *      共享锁：共享锁则是一种乐观锁，它放宽了加锁策略，允许多个执行读操作的线程同时访问共享资源。
+ *
+ *  2、分类 - 独占锁： ReentrantLock， ReentrantReadWriteLock.WriteLock
+ *         - 共享锁：ReentrantReadWriteLock.ReadLock，CyclicBarrier， CountDownLatch和Semaphore都是共享锁
+ *  3、其他 - wait(), notify() ，对应Contition的 await 和 signal
+ *         - 前者是object，在代码中用锁对象即可调用，后者是一个即可，必须使用ReentrantLock生成
+ *  4、注意事项
+ *      - 除了Synchronized自动走出锁范围，其余占有了锁，一定要记得释放锁，可以在finally中释放!!!!
+ *      - 公平参数，默认都是关闭的，所以不要以为等的时间越长就能更大几率获得锁！公平和非公平对应着：公平锁和非公平锁（Sync类的两个子类），非公平锁无视等待队列，直接上来就是抢！
+ *      - java实现锁的底层都是使用Sync类，private final Sync sync; - 是继承了AbstractQueuedSynchronizer（AQS）的内部抽象类，主要由它负责实现锁的功能。
+ *          - 关于 AbstractQueuedSynchronizer 只要知道它内部存在一个获取锁的等待队列及其互斥锁状态下的int状态位（0当前没有线程持有该锁、n存在某线程重入锁n次）即可，该状态位也可用于其它诸如共享锁、信号量等功能。
+ *
  *
  */
 public class ConcurrentLearn {
 
 //    String str = "{\"t\":{\"appId\":\"bhhj\",\"applicationStatus\":\"CREATED\",\"businessId\":\"hbw\",\"channel\":\"BHHJ_MF_baidu\",\"createdTime\":1531118705496,\"customerId\":30301726,\"device\":\"ANDROID\",\"deviceId\":\"581345932\",\"id\":280791,\"orderNo\":\"IM2018070914450549687745\",\"quickApplyFlag\":false},\"timestamp\":\"1531118705504\",\"topic\":\"im_core_application\"}";
+    public static void main(String[] args) {
+        //Demo code：
+        //1、 CountDownLatch - 用于n个线程等待其余M个线程结束, 类位于java.util.concurrent包下
+//        CountDownLatch doneSignal = new CountDownLatch(3); // 定义了计数器为3.表示有3个线程结束即可！
+//        for(int i=0; i<5; i++){
+//            new InnerThread().start(); // m个线程，InnerThread的run方法末尾中写了doneSignal.countDown(); 必须手动减
+//        }
+//        doneSignal.await(); // 阻塞，直到3个线程结束
+        //  await(long timeout, TimeUnit unit) throws InterruptedException { }; 这个就可以实现超时功能
 
+        //2: CyclicBarrier - java.util.concurrent包，实现 M 个线程在barrier栅栏处互相等待，可以重用状态（所以叫cycli），1的计数器只能减不能重新赋值！
+
+        //3： Semaphore - java.util.concurrent包，用于限制最多M个线程同时并发
+
+        //4： ReentrantLock - java.util.concurrent包，用于实现同步功能，与synchronized相似但是面向对象更灵活
+        ReentrantLock takeLock = new ReentrantLock();
+        // 获取锁
+        takeLock.lock();
+        try {
+        // 业务逻辑
+        } finally {
+        // 释放锁
+            takeLock.unlock();
+        }
+
+        //5：ReentrantReadWriteLock -
+
+        //8：Condition接口 （需要与ReentrantLock配合使用）- 条件变量很大一个程度上是为了解决Object.wait/notify/notifyAll难以使用的问题，也就是消费者生产者代码中判断队列是否满，是否空的条件！
+    }
 }

@@ -31,6 +31,17 @@ public class FinallyTest {
         System.err.println(a());
         System.err.println(target);
 
+//        try {
+//            new RuntimeException("try exception");
+//            System.out.println("try");
+//        } catch (Exception e) {
+//            System.out.println("catch");
+//        }finally {
+//            System.out.println("finally");
+//        }
+
+
+
     }
 
     static int target = 8;

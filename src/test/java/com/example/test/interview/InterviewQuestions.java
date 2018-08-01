@@ -74,7 +74,14 @@ package com.example.test.interview;
  *     7、什么是不可变对象（immutable object）？Java 中怎么创建一个不可变对象？
  *          ~不可变对象指对象一旦被创建，状态就不能再改变。任何修改都会创建一个新的对象，如 String、Integer及其它包装类。
  *
- *
+ *《Java核心技术36讲 总结》：
+ *  1、列几个finally 不会被执行的情况：
+ *      - 1、try-catch异常退出。比如：在try中 执行 System.exit(1);
+ *      - 2、无限循环。 try中 执行  while (true)
+ *      - 3、线程被杀死。 当执行try,finally的线程被杀死时，finally也无法执行。
+ *    总结：1、不要再finally中使用return语句。
+ *          2、finally总是执行，除非程序或者线程被中断。
+ *  2、
  *
  */
 public class InterviewQuestions {
