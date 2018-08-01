@@ -85,6 +85,28 @@ package com.example.concurrent.jvm;
  *  3、如何防止内存泄漏？
  *      -
  *
+ *《触发JVM进行Full GC的情况及应对策略》：
+ *      - Minor GC ：从年轻代空间（包括 Eden 和 Survivor 区域）回收内存被称为 Minor GC
+ *      - Major GC ：对老年代GC称为Major GC
+ *      - Full GC : 而Full GC是对整个堆来说的
+ *  下边看看有那种情况触发JVM进行Full GC及应对策略。
+ *   1、System.gc()方法的调用
+ *      - 此方法的调用是建议JVM进行Full GC,虽然只是建议而非一定,但很多情况下它会触发 Full GC,从而增加Full GC的频率,也即增加了间歇性停顿的次数。
+ *      - 强烈影响系建议能不使用此方法就别使用，让虚拟机自己去管理它的内存，可通过通过-XX:+ DisableExplicitGC来禁止RMI调用System.gc。
+ *   2、老年代空间不足
+ *      - 老年代空间只有在新生代对象转入及 创建为大对象、大数组时才会出现不足的现象，当执行Full GC后空间仍然不足，则抛出如下错误：
+ *        java.lang.OutOfMemoryError: Java heap space
+ *      - 为避免以上两种状况引起的Full GC，调优时应尽量做到让对象在Minor GC阶段被回收、让对象在新生代多存活一段时间及不要创建过大的对象及数组。
+ *   3、永生区空间不足
+ *   4、统计得到的Minor GC晋升到老年代的平均大小 大于老年代的剩余空间
+ *   5、堆中分配很大的对象
+ *      - 所谓大对象，是指需要大量连续内存空间的java对象，例如很长的数组，此种对象会直接进入老年代，而老年代虽然有很大的剩余空间，
+ *        但是无法找到足够大的连续空间来分配给当前对象，此种情况就会触发JVM进行Full GC。
+ *《Java内存模型中的happen-before 原则是什么？》
+ *  1、背景 - Java语言设计之初就引入了线程的概念，以充分利用现代处理器的计算能力，这既带来了强大、灵活的多线程机制，也带来了线程安全等令人混淆的问题，
+ *           而Java内存模型(JMM)为我们提供了一个在纷乱之中达成一致的指导准则。
+ *
+ *
  */
 public class JVMLearn {
 
