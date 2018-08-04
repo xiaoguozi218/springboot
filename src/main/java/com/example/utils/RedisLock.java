@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  *二、应用的场景例子
  * 管理后台的部署架构（多台tomcat服务器+redis【多台tomcat服务器访问一台redis】+mysql【多台tomcat服务器访问一台服务器上的mysql】）就满足使用分布式锁的条件。多台服务器要访问redis全局缓存的资源，如果不使用分布式锁就会出现问题。
  *
- *三、使用redis的setNX命令实现分布式锁
+ *三、使用redis的setNX命令实现分布式锁 - 这个锁是基于redis的setNX操作实现的阻塞式分布式锁。
  * 1、实现的原理
  　　Redis为单进程单线程模式，采用队列模式将并发访问变成串行访问，且多客户端对Redis的连接并不存在竞争关系。redis的SETNX命令可以方便的实现分布式锁。
  *

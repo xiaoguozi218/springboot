@@ -152,7 +152,8 @@ public class RedisTest {
 //        ListOperate();
 //        SetOperate();
 //        SortedSetOperate();
-        HashOperate();
+//        HashOperate();
+        connectRedis();
     }
 
     private static Jedis connectRedis(){
