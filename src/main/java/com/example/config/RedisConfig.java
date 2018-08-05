@@ -39,7 +39,8 @@ import redis.clients.jedis.JedisPoolConfig;
              (三)采用了非阻塞I/O多路复用机制
  *
  *
- * 《*》可能是目前最详细的Redis内存模型及应用解读：- 本文主要介绍以3.0为例的Redis的内存模型
+ *《可能是目前最详细的Redis内存模型及应用解读》：- 本文主要介绍以3.0为例的Redis的内存模型
+ *   - 包括：Redis占用内存的情况及如何查询、不同的对象类型在内存中的编码方式、内存分配器（jemalloc）、简单动态字符串（SDS）、RedisObject等。
  *     一、Redis内存统计
  *        1、通过info命令可以查看内存使用情况：info memory
  *          - 其中，info命令可以显示redis服务器的许多信息，包括服务器基本信息、CPU、内存、持久化、客户端连接信息等等；memory是参数，表示只显示内存相关的信息。
@@ -70,12 +71,46 @@ import redis.clients.jedis.JedisPoolConfig;
  *                              不过可以看出，字符串对象虽然经过了RedisObject的包装，但仍然需要通过SDS存储。
  *             （4）jemalloc：无论是DictEntry对象，还是RedisObject、SDS对象，都需要内存分配器（如jemalloc）分配内存进行存储。
  *                           以DictEntry对象为例，有3个指针组成，在64位机器下占24个字节，jemalloc会为它分配32字节大小的内存单元。
- *         2、jemalloc
- *         3、RedisObject
- *         4、SDS
+ *         2、jemalloc - Redis在编译时便会指定内存分配器；内存分配器可以是 libc 、jemalloc或者tcmalloc，默认是 jemalloc。
+ *              - jemalloc作为Redis的默认内存分配器，在减小内存碎片方面做的相对比较好。
+ *         3、RedisObject - 前面说到，Redis对象有5种类型；无论是哪种类型，Redis都不会直接存储，而是通过 RedisObject对象 进行存储。
+ *              - RedisObject的每个字段的含义和作用如下：
+ *                 （1）type - type字段表示对象的类型，占4个比特；目前包括 (字符串)、(列表)、(哈希)、（集合)、(有序集合)。
+ *                          - 命令： type key
+ *                 （2）encoding - encoding表示对象的内部编码，占4个比特。- 对于Redis支持的每种类型，都有至少两种内部编码，例如对于字符串，有int、embstr、raw三种编码。
+ *                          - 命令： object encoding key - 通过object encoding命令，可以查看对象采用的编码方式
+ *                 （3）lru - lru记录的是对象最后一次被命令程序访问的时间，占据的比特数不同的版本有所不同（如4.0版本占24比特，2.6版本占22比特）
+ *                         - 命令：object idletime key 命令可以显示该空转时间（单位是秒）
+ *                 （4）refcount - refcount记录的是该对象被引用的次数，类型为整型。
+ *                         - refcount的作用，主要在于对象的引用计数和内存回收：- 当创建新对象时，refcount初始化为1；
+ *                                                                       - 当有新程序使用该对象时，refcount加1；
+ *                                                                       - 当对象不再被一个新程序使用时，refcount减1；
+ *                                                                       - 当refcount变为0时，对象占用的内存会被释放。
+ *                         - Redis中被多次使用的对象(refcount>1)称为共享对象。目前共享对象仅支持整数值的字符串对象。
+ *                 （5）ptr - ptr指针指向具体的数据，如前面的例子中，set hello world，ptr指向包含字符串world的SDS。
+ *                 （6）总结 - 综上所述，redisObject的结构与对象类型、编码、内存回收、共享对象都有关系；一个redisObject对象的大小为16字节：
+ *                          - 4bit+4bit+24bit+4Byte+8Byte=16Byte。
+ *         4、SDS - Redis没有直接使用C字符串(即以空字符‘’结尾的字符数组)作为默认的字符串表示，而是使用了SDS。SDS是简单动态字符串(Simple Dynamic String)的缩写
+ *              （1）SDS结构 - 其中，buf表示字节数组，用来存储字符串；len表示buf已使用的长度，free表示buf未使用的长度。
+ *              （2）SDS与C字符串的比较
+ *                      - SDS在C字符串的基础上加入了free和len字段，带来了很多好处：
+ *                          - 获取字符串长度：SDS是O(1)，C字符串是O(n)。
  *
- *      四、Redis的对象类型与内部编码
+ *      四、Redis的对象类型与内部编码 - 前面已经说过，Redis支持5种对象类型，而每种结构都有至少两种编码。
+ *          - 这样做的好处在于：1、一方面接口与实现分离，当需要增加或改变内部编码时，用户使用不受影响
+ *                           2、另一方面可以根据不同的应用场景切换内部编码，提高效率。
+ *          - 关于Redis内部编码的转换，都符合以下规律：编码转换在Redis写入数据时完成，且转换过程 不可逆，只能从小内存编码向大内存编码转换。
  *
+ *         1、字符串
+ *           （1）概况 - 字符串是最基础的类型，因为所有的键都是字符串类型，且字符串之外的其他几种复杂类型的元素也是字符串。字符串长度不能超过512MB。
+ *           （2）内部编码 - 字符串类型的内部编码有3种，它们的应用场景如下：
+ *                          1、int：8个字节的长整型。字符串值是整型时，这个值使用long整型表示。
+ *                          2、embstr：<=39字节的字符串。embstr与raw都使用RedisObject和SDS保存数据。
+ *                          3、raw：大于39个字节的字符串
+ *           （3）编码转换 - 当int数据不再是整数，或大小超过了long的范围时，自动转化为raw。
+ *                       - 而对于embstr，由于其实现是只读的，因此在对embstr对象进行修改时，都会先转化为raw再进行修改，
+ *                         因此，只要是修改embstr对象，修改后的对象一定是raw的，无论是否达到了39个字节。
+ *         2、列表
  *
  */
 @Configuration
