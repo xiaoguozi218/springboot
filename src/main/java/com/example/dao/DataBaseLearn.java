@@ -41,7 +41,7 @@ package com.example.dao;
  *  -
  *
  *
- *《数据库索引为什么使用B树？》
+ *《数据库索引为什么使用B树？》 - 其中的B就表示平衡(Balance)
  *  1、名次解释：- B tree： 二叉树（Binary tree），每个节点只能存储一个数。
  *             - B-tree：B树（B-Tree，并不是B“减”树，横杠为连接符，容易被误导）B树属于多叉树又名 平衡多路查找树。每个节点可以多个数（由磁盘大小决定）。
  *             - B+tree 和 B*tree 都是 B-tree的变种
