@@ -191,7 +191,7 @@ import java.util.concurrent.*;
  *  - Executor框架简介：Java的线程既是工作单元，也是执行机制。从JDK5开始，把工作单元和执行机制分离开来。
  *      Executor框架由3大部分组成任务：1、被执行任务需要实现的接口：Runnable接口或Callable接口。
  *                                 2、异步计算的结果。Future接口和FutureTask类。
- *                                 3、任务的执行。两个关键类ThreadPoolExecutor和SeheduledThreadPoolExecutor ？。
+ *                                 3、任务的执行。两个关键类ThreadPoolExecutor和ScheduledThreadPoolExecutor ？。
  *  - 概念介绍：
  *    - Runnable与Callable的区别：(1)Callable规定的方法是call(),Runnable规定的方法是run().
  *                              (2)Callable的任务执行后可返回值，而Runnable的任务是不能返回值的
