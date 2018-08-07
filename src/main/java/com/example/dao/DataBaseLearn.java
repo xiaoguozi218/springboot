@@ -157,6 +157,11 @@ package com.example.dao;
  *      1、用户中心业务场景
  *          - 用户中心是一个非常常见的业务，主要提供用户注册、登录、查询/修改等功能，其核心表为：
  *
+ *《mysql常用命令大全》 - linux
+ *  1、重启服务 - service mysqld restart
+ *     查看状态 - service mysqld status
+ *
+ *
  */
 public class DataBaseLearn {
 

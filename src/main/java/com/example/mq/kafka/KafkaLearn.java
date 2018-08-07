@@ -48,6 +48,12 @@ package com.example.mq.kafka;
  *  6、KafkaApis
  *      - KafkaApis是用于处理对通信网络传输过来的业务消息请求的中心转发组件。该组件反映出Kafka Broker Server可以提供哪些服务。
  *
+ *《你必须要知道的kafka》 - Kafka社区非常活跃,从0.9 版本开始，Kafka的标语已经从“一个高吞吐量，分布式的消息系统”改为"一个分布式流平台"。
+ *  1. 概述 -
+ *      Kafka和传统的消息系统不同在于：1、kafka是一个分布式系统，易于向外扩展。
+ *                                 2、它同时为发布和订阅 提供高吞吐量
+ *                                 3、它支持多订阅者，当失败时能 自动平衡消费者
+ *                                 4、消息的持久化
  *
  * 查漏补缺：
  *  1、segment达到一定的大小（可以通过配置文件设定,默认 1G ）后将不会再往该segment写数据，broker会创建新的segment。
@@ -68,9 +74,23 @@ package com.example.mq.kafka;
  *      - 0：这意味着producer无需等待来自broker的确认而继续发送下一批消息。这种情况下数据传输效率最高，但是数据可靠性确是最低的。
  *      - -1：producer需要等待ISR中的所有follower都确认接收到数据后才算一次发送完成，可靠性最高。但是这样也不能保证数据不丢失，比如当ISR中只有leader时(其他节点都和zk断开连接，或者都没追上)，这样就变成了acks=1的情况。
  *
+ *《kafka的一些常用命令》
+ *  - 启动zookeeper ：bin/zookeeper-server-start.sh config/zookeeper.properties &
+ *  - 启动kafka : bin/kafka-server-start.sh config/server.properties &
+ *  - 停止kafka : bin/kafka-server-stop.sh
+ *  - 停止zookeeper : bin/zookeeper-server-stop.sh
+ *
  *
  */
 public class KafkaLearn {
 
+    public static void main(String[] args) {
+
+        //producer
+        new Thread(new UserKafkaProducer("test01")).start();
+
+        //consumer
+        new Thread(new KafkaConsumer()).start();
+    }
 
 }
