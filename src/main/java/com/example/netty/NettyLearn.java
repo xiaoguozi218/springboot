@@ -84,7 +84,7 @@ package com.example.netty;
  *
  *
  *
- * 《Netty 实战(精髓)》：是对 Norman Maurer 的 《Netty in Action》的一个精简
+ *《Netty 实战(精髓)》：是对 Norman Maurer 的 《Netty in Action》的一个精简
  *   一、Netty-异步和数据驱动
  *      ~什么是 Netty：Netty 是一个基于 NIO 的客户端、服务器端 编程框架。      - Netty 是一个广泛使用的 Java 网络编程框架。 - Netty是典型的Reactor模型结构
  *      ~一些历史：- 在网络发展初期，需要花很多时间来学习 socket 的复杂，寻址等等，在 C socket 库上进行编码，并需要在不同的操作系统上做不同的处理。
@@ -154,7 +154,28 @@ package com.example.netty;
  *              ~SimpleChannelHandler
  *
  *  四、核心功能
- *      1、Transport - 本章将涵盖很多 transport(传输)，他们的用例以及 API: - NIO、OIO、Local(本地)、Embedded(内嵌)
+ *     1、Transport(传输) - 本章将涵盖很多 transport(传输)，他们的用例以及 API: - NIO、OIO(BIO)、Local(本地)、Embedded(内嵌)
+ *         - Transport API: - Transport API 的核心是 Channel 接口.
+ *           - Channel: 每个 Channel 都会分配一个 ChannelPipeline 和ChannelConfig。 - Channel 是线程安全(thread-safe)的
+ *              - ChannelConfig: 负责设置并存储 Channel 的配置，并允许在运行期间更新它们。传输一般有特定的配置设置，可能实现了 ChannelConfig 的子类型。
+ *              - ChannelPipeline: 容纳了使用的 ChannelHandler 实例，这些ChannelHandler 将处理通道传递的“入站”和“出站”数据以及事件。
+ *                  - ChannelPipeline 实现了常用的 Intercepting Filter（拦截过滤器）设计模式。UNIX管道是另一例子：命令链接在一起，一个命令的输出连接到 的下一行中的输入。
+*            - Channel 是线程安全(thread-safe)的，它可以被多个不同的线程安全的操作，在多线程环境下，所有的方法都是安全的。
+ *             正因为 Channel 是安全的，我们存储对Channel的引用，并在学习的时候使用它写入数据到远程已连接的客户端，使用多线程也是如此。
+ *         - Netty中的传输方式有如下 4 种：NIO、OIO、Local(本地)、Embedded(内嵌)
+ *              1、NIO - io.netty.channel.socket.nio - 基于java.nio.channels的工具包，使用选择器作为基础的方法。
+ *                  - NIO传输是目前最常用的方式，它通过使用选择器提供了完全异步的方式操作所有的 I/O，NIO 从Java 1.4才被提供。
+ *              2、OIO - io.netty.channel.socket.oio - 基于java.net的工具包，使用阻塞流。
+ *              3、Local - io.netty.channel.local - 用来在虚拟机之间本地通信。
+ *              4、Embedded - io.netty.channel.embedded - 嵌入传输，它允许在没有真正网络的传输中使用 ChannelHandler，可以非常有用的来测试ChannelHandler的实现。
+ *         - Transport 使用情况: - OIO-在低连接数、需要低延迟时、阻塞时使用
+ *                              - NIO-在高连接数时使用
+ *                              - Local-在同一个JVM内通信时使用
+ *                              - Embedded-测试ChannelHandler时使用
+ *     2、Buffer（缓冲）- Netty 中用 ByteBuf 替代 ByteBuffer，一个强大的实现，解决 JDK 的 API 的限制。
+ *        - 正如我们先前所指出的，网络数据的基本单位永远是 byte(字节)。Java NIO 提供 ByteBuffer 作为字节的容器，但这个类是过于复杂，有点难以使用。
+ *        2.1、Buffer API - ByteBuf、ByteBufHolder
+ *
  *
  *
  * 注意：1、Netty的“零拷贝” -
