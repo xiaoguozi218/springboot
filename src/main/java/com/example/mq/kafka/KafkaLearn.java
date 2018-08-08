@@ -95,6 +95,14 @@ package com.example.mq.kafka;
  *      - 1（默认）：这意味着producer在ISR中的leader已成功收到的数据并得到确认后发送下一条message。如果leader宕机了，则会丢失数据。
  *      - 0：这意味着producer无需等待来自broker的确认而继续发送下一批消息。这种情况下数据传输效率最高，但是数据可靠性确是最低的。
  *      - -1：producer需要等待ISR中的所有follower都确认接收到数据后才算一次发送完成，可靠性最高。但是这样也不能保证数据不丢失，比如当ISR中只有leader时(其他节点都和zk断开连接，或者都没追上)，这样就变成了acks=1的情况。
+ *  6、★第一，同一个消费者组里面不能是同时消费者消费消息，只能有一个消费者去消费，
+ *      第二，同一个消费者组里面是不会重复消费消息的，
+ *      第三，同一个消费者组的一个消费者不是以一条一条数据为单元的，是以分区为单元，就相当于消费者和分区建立某种socket，进行传输数据，所以，一旦建立这个关系，这个分区的内容只能是由这个消费者消费。
+ *  7、★强调：kafka分区内有序，整体不一定有序。
+ *  8、当以下事件发生时，Kafka 将会进行一次分区分配：
+ *      - 1、同一个 Consumer Group 内新增消费者
+ *      - 2、消费者离开当前所属的Consumer Group，包括shuts down 或 crashes
+ *      - 3、订阅的主题新增分区
  *
  *《kafka的一些常用命令》
  *  - 启动zookeeper ：bin/zookeeper-server-start.sh config/zookeeper.properties &
