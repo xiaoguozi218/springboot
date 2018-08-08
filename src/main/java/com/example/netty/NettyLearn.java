@@ -157,7 +157,10 @@ package com.example.netty;
  *      1、Transport - 本章将涵盖很多 transport(传输)，他们的用例以及 API: - NIO、OIO、Local(本地)、Embedded(内嵌)
  *
  *
- * 注意：
+ * 注意：1、Netty的“零拷贝” -
+ *          - Zero-copy, 就是在操作数据时, 不需要将数据 buffer 从一个内存区域拷贝到另一个内存区域. 因为少了一次内存的拷贝, 因此 CPU 的效率就得到的提升。
+ *          - 在 OS 层面上的 Zero-copy 通常指避免在 用户态(User-space) 与 内核态(Kernel-space) 之间来回拷贝数据。
+ *          - 但Netty中的Zero-copy与 OS 的Zero-copy不太一样, Netty的 Zero-copy 完全是在用户态(Java 层面)的, 它的 Zero-copy 的更多的是偏向于 优化数据操作。
  *
  *
  */

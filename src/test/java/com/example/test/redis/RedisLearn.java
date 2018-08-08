@@ -4,6 +4,7 @@ package com.example.test.redis;
  * @Auther: gsh
  * @Date: 2018/8/6 11:44
  * @Description:   学会这15点，让你分分钟拿下Redis数据库
+ *
  * 1、Redis简介 - REmote DIctionary Server(Redis) - 远程字典服务
  *    - Redis是一个开源的使用ANSI C语言编写的Key-Value数据库，并提供多种语言的API。
  * 2、支持的语言 - 大部门都支持
@@ -15,7 +16,7 @@ package com.example.test.redis;
  *      5、商品列表、评论列表等
  * 4、Redis安装 - Redis是c语言开发的，安装redis需要c语言的编译环境
  * 5、Redis数据类型 - Redis一共支持五种数据类型： 6、Stream
- *      1、string(字符串) - 它是redis最基本的数据类型，一个key对应一个value，需要注意是一个键值较大存储512MB。
+ *      1、string(字符串) - 它是redis最基本的数据类型，一个key对应一个value，需要注意是一个键值较大存储512MB，而memcache只有1MB
  *          相关命令介绍  - set 为一个Key设置value（值）
  *                      - get 获得某个key对应的value（值）
  *                      - getset 为一个Key设置value（值）并返回对应的值
@@ -93,8 +94,30 @@ package com.example.test.redis;
  *                  - 如果同时 配置了RDB和AOF,启动是只加载AOF文件恢复数据
  *                  - 如果只配置RDB,启动时将加载dump文件恢复数据
  *                  注意：只要配置了aof，但是没有aof文件，这个时候启动的数据库会是空的
- * 14、Redis 生产优化介绍
- * 15、Redis集群应用
+ * 14、Redis 生产优化介绍 -
+ *     1、Master最好不要做任何持久化工作，如RDB内存快照和AOF日志文件
+ *     2、如果数据比较重要，某个Slave开启AOF备份数据，策略设置为每秒同步一次
+ *     3、为了主从复制的速度和连接的稳定性，Master和Slave最好在同一个局域网内
+ *     4、主从复制不要用图状结构，用单向链表结构更为稳定，即：Master <- Slave1 <- Slave2 <- Slave3...
+ *        - 这样的结构方便解决单点故障问题，实现Slave对Master的替换。如果Master挂了，可以立刻启用Slave1做Master，其他不变。
+ * 15、Redis集群应用 -
+ *     - 为了避免Master DB的单点故障，集群一般都会采用两台Master DB做双机热备，所以整个集群的读和写的可用性都非常高。
+ *
+ * 16、Redis的回收策略 -
+ *     1、volatile-lru：从已设置过期时间的数据集（server.db[i].expires）中挑选 最近最少使用的数据淘汰
+ *     2、volatile-ttl：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰
+ *     3、volatile-random：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰
+ *     4、allkeys-lru：从数据集（server.db[i].dict）中挑选最近最少使用的数据淘汰
+ *     5、allkeys-random：从数据集（server.db[i].dict）中任意选择数据淘汰
+ *     6、no-enviction（驱逐）：禁止驱逐数据
+ *
+ * 17、使用Redis有哪些好处？
+ *     1、速度快，因为数据存在内存中，类似于 HashMap，HashMap的优势就是查找和操作的时间复杂度都是O(1)
+ *     2、支持丰富数据类型，支持string，list，set，sorted set，hash
+ *     3、redis可以持久化其数据
+ *     4、支持事务，操作都是原子性，所谓的原子性就是对数据的更改要么全部执行，要么全部不执行
+ *     5、丰富的特性：可用于缓存，消息，按key设置过期时间，过期后将会自动删除
+ * 18、
  *
  */
 public class RedisLearn {
