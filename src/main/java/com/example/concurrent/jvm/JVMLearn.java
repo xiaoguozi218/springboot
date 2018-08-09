@@ -103,6 +103,13 @@ package com.example.concurrent.jvm;
  *      - 所谓大对象，是指需要大量连续内存空间的java对象，例如很长的数组，此种对象会直接进入老年代，而老年代虽然有很大的剩余空间，
  *        但是无法找到足够大的连续空间来分配给当前对象，此种情况就会触发JVM进行Full GC。
  *
+ *《JVM 垃圾回收机制 - GC》:
+ *  1、垃圾回收器的种类 ：大概可以分成 四种
+ *      1、串行垃圾回收器（Serial Garbage Collector）
+ *      2、并行垃圾回收器（Parallel Garbage Collector）
+ *      3、并发标记扫描垃圾回收器（CMS Garbage Collector）- CMS 是一种以获取 最短回收停顿时间为目标 的收集器。
+ *      4、G1垃圾回收器（G1 Garbage Collector）
+ *
  *《Java内存模型中的happens-before 原则是什么？》
  *  1、What - 先行发生是Java内存模型中定义的两个操作之间的 偏序关系。- 如果说操作A先行发生于操作B，其实就是说在发生操作B之前，操作A产生的影响能被操作B观察到。
  *  2、背景 - 我们编写的程序都要经过优化后（编译器 和 处理器 会对我们的程序进行优化 以提高运行效率）才会被运行，
