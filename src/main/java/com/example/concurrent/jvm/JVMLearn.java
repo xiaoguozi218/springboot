@@ -1,5 +1,9 @@
 package com.example.concurrent.jvm;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * Created by MintQ on 2018/6/28.
  *
@@ -127,5 +131,23 @@ package com.example.concurrent.jvm;
  *
  */
 public class JVMLearn {
+
+    //bTraceTest
+    public int add(int a, int b) {
+        return a + b;
+    }
+    public void run(){
+        int a = (int) (Math.random() * 1000);
+        int b = (int) (Math.random() * 1000);
+        System.out.println(add(a, b));
+    }
+    public static void main(String[] args) throws IOException {
+        BufferedReader bReader = new BufferedReader(new InputStreamReader(System.in));
+        JVMLearn bTraceTest=new JVMLearn();
+        bReader.readLine();
+        for (int i = 0; i < 10; i++) {
+            bTraceTest.run();
+        }
+    }
 
 }
