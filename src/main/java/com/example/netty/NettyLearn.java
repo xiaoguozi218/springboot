@@ -1,5 +1,7 @@
 package com.example.netty;
 
+import io.netty.buffer.ByteBuf;
+
 /**
  * Created by MintQ on 2018/6/12.
  *
@@ -175,7 +177,49 @@ package com.example.netty;
  *     2、Buffer（缓冲）- Netty 中用 ByteBuf 替代 ByteBuffer，一个强大的实现，解决 JDK 的 API 的限制。
  *        - 正如我们先前所指出的，网络数据的基本单位永远是 byte(字节)。Java NIO 提供 ByteBuffer 作为字节的容器，但这个类是过于复杂，有点难以使用。
  *        2.1、Buffer API - ByteBuf、ByteBufHolder
+ *             - Netty 使用 reference-counting(引用计数)来判断何时可以释放 ByteBuf 或 ByteBufHolder 和其他相关资源，从而可以利用池和其他技巧来提高性能和降低内存的消耗.
+ *             - Netty Buffer API 提供了几个优势：可以自定义缓冲类型、通过一个内置的复合缓冲类型实现零拷贝、扩展性好，比如 StringBuilder、不需要调用 flip() 来切换读/写模式、
+ *                                              读取和写入索引分开、方法链、引用计数、Pooling(池)
+ *        2.2、ByteBuf - 字节数据的容器 - 所有的网络通信最终都是基于底层的 字节流传输，因此一个高效、方便、易用的数据接口是必要的，而 Netty 的 ByteBuf 满足这些需求。
+ *             - ByteBuf 是一个很好的经过优化的数据容器，我们可以将字节数据有效的添加到 ByteBuf 中或从 ByteBuf 中获取数据。
+ *             - ByteBuf 有2部分：一个用于读，一个用于写。
+ *             1、ByteBuf 是如何工作的？-
+ *                - 数据到 ByteBuf 后，writerIndex（写入索引）增加。开始读字节后，readerIndex（读取索引）增加。
+ *                  你可以读取字节，直到写入索引和读取索引处在相同的位置，ByteBuf 变为不可读。当访问数据超过数组的最后位，则会抛出 IndexOutOfBoundsException。
+ *                - ByteBuf 的默认最大容量限制是 Integer.MAX_VALUE。
+ *                - ByteBuf类似于一个字节数组，最大的区别是读和写的索引可以用来控制对缓冲区数据的访问。
+ *             2、ByteBuf 使用模式 - 1. HEAP BUFFER(堆缓冲区) 2.DIRECT BUFFER(直接缓冲区) 3.COMPOSITE BUFFER(复合缓冲区)
+ *                - 1、堆缓冲区: 最常用的模式是 ByteBuf 将数据存储在 JVM 的堆空间，这是通过将数据存储在数组的实现。
+ *                          堆缓冲区可以快速分配，当不使用时也可以快速释放。它还提供了直接访问数组的方法，通过 ByteBuf.array() 来获取 byte[]数据。
+ *                        注意：访问非堆缓冲区 ByteBuf 的数组会导致UnsupportedOperationException， 可以使用 ByteBuf.hasArray()来检查是否支持访问数组。
+ *                - 2、直接缓冲区：“直接缓冲区”是另一个 ByteBuf 模式。
+ *                      - 在 JDK1.4 中被引入 NIO 的ByteBuffer 类允许 JVM 通过本地方法调用分配内存，其目的是：
+ *                          1、通过免去中间交换的 内存拷贝, 提升IO处理速度; 直接缓冲区的内容可以驻留在垃圾回收扫描的堆区以外。
+ *                          2、DirectBuffer 在 -XX:MaxDirectMemorySize=xxM大小限制下, 使用 Heap 之外的内存, GC对此”无能为力”,也就意味着规避了在高负载下频繁的GC过程对应用线程的中断影响
+ *                      - 就解释了为什么“直接缓冲区”对于那些通过 socket 实现数据传输的应用来说，是一种非常理想的方式。
+ *                        如果你的数据是存放在堆中分配的缓冲区，那么实际上，在通过 socket 发送数据之前，JVM 需要将先数据复制到直接缓冲区。
+ *                      - 直接缓冲区的缺点：在内存空间的分配和释放上比堆缓冲区更复杂，另外一个缺点是如果要将数据传递给遗留代码处理，因为数据不是在堆上，你可能不得不作出一个副本。
+ *                - 3、复合缓冲区 - 复合缓冲区就像一个列表，我们可以动态的添加和删除其中的 ByteBuf，JDK 的 ByteBuffer 没有这样的功能。
+ *                      - Netty提供了 ByteBuf 的子类 CompositeByteBuf 类来处理复合缓冲区，CompositeByteBuf 只是一个视图。
+ *        2.3、字节级别的操作 - 除了基本的读写操作， ByteBuf 还提供了它所包含的数据的修改方法。
+ *        2.4、ByteBufHolder - Netty提供 ByteBufHolder 处理这种常见的情况。ByteBufHolder还提供对于Netty的高级功能,如缓冲池,其中保存实际数据的ByteBuf可以从池中借用,如果需要还可以自动释放。
+ *        2.5、ByteBuf分配 -  ByteBuf 实例管理的几种方式：ByteBufAllocator、Unpooled（非池化）缓存、ByteBufUtil
+ *             1、ByteBufAllocator - 为了减少分配和释放内存的开销，Netty 通过支持池类 ByteBufAllocator，可用于分配的任何 ByteBuf 我们已经描述过的类型的实例。
+ *                      - 获得 ByteBufAllocator 的两种方式：1、从 channel 获得 ByteBufAllocator。 2、从ChannelHandlerContext 获得 ByteBufAllocator
+ *             2、Unpooled - 当未引用ByteBufAllocator时,上面的方法无法访问到ByteBuf。对于这个用例 Netty 提供一个实用工具类称为 Unpooled,它提供了静态辅助方法来创建非池化的ByteBuf实例。
+ *             3、ByteBufUtil - ByteBufUtil静态辅助方法来操作 ByteBuf，因为这个 API 是通用的，与使用池无关，这些方法已经在外面的分配类实现。
+ *        2.6、引用计数器 - Netty4 引入了 引用计数器给 ByteBuf 和 ByteBufHolder（两者都实现了 ReferenceCounted 接口）。
+ *             - 引用计数本身并不复杂;它在特定的对象上跟踪引用的数目。实现了ReferenceCounted 的类的实例会通常开始于一个活动的引用计数器为 1。活动的引用计数器大于0的对象被保证不被释放。
+ *               当数量引用减少到0，该实例将被释放。
+ *             - 技术就是诸如 PooledByteBufAllocator 这种减少内存分配开销的池化的精髓部分。
+ *             - release（）将会递减对象引用的数目。当这个引用计数达到0时，对象已被释放，并且该方法返回 true。- 在一般情况下，最后访问的对象负责释放它。
+ *     3、ChannelHandler 和 ChannelPipeline
+ *        3.1、ChannelHandler 家族
+ *        3.2、ChannelPipeline
+ *        3.3、ChannelHandlerContext
  *
+ *        3.4、总结：本章带你深入窥探了一下 Netty 的数据处理组件: ChannelHandler。
+ *               我们讨论了 ChannelHandler 之间是如何链接的以及它在像ChannelInboundHandler 和 ChannelOutboundHandler这样的化身中是如何与 ChannelPipeline 交互的。
  *
  *
  * 注意：1、Netty的“零拷贝” -
