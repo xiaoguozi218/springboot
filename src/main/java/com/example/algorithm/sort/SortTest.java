@@ -145,7 +145,11 @@ public class SortTest {
     /**
      * @author  xiaoguozi
      * @create  2018/7/15 下午6:37
-     * @desc    快速排序
+     * @desc    快速排序 - 指针交换法
+     * 要点：1、我们首先选定基准元素Pivot，并且设置两个指针left（low）和right（high），指向数列的最左和最右两个元素：
+     *      2、接下来是第一次循环，从right指针开始，把指针所指向的元素和基准元素做比较。如果大于等于pivot，则指针向左移动；如果小于pivot，则right指针停止移动，切换到left指针。
+     *      3、轮到left指针行动，把指针所指向的元素和基准元素做比较。如果小于等于pivot，则指针向右移动；如果大于pivot，则left指针停止移动。交换元素。
+     *      4、重复2、3步骤，直到left和right指针已经重合在了一起。当left和right指针重合之时，我们让pivot元素和left与right重合点的元素进行交换。
      **/
     public static void quickSort_2(int[] arr , int low , int high) {
         int l = low;
