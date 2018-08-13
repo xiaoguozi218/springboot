@@ -114,12 +114,13 @@ import io.netty.buffer.ByteBuf;
  *
  *  三、Netty 总览
  *      ~本章主要了解 Netty 的架构模型，核心组件包括：
- *          - Bootstrap 和 ServerBootstrap
- *          - Channel
- *          - ChannelHandler
- *          - ChannelPipeline
- *          - ChannelFuture
- *          - EventLoop （事件循环）
+ *          - ServerBootstrap：服务器端程序的入口,这是Netty为简化网络程序配置和关闭等生命周期管理,所引入的Bootstrapping机制.我们通常所做的创建Channel、绑定端口、注册Handler等,都可以通过这个统一的入口
+ *            和 Bootstrap ：客户端的通常人口。
+ *          - Channel：作为一个基于NIO的扩展框架，Channel和Selector等概念仍然是Netty的基础组件，但是针对应用开发具体需求，提供了相对易用的抽象。
+ *          - ChannelHandler：这是应用开发者放置业务逻辑的主要地方，也是我上面提到的“Separation Of Concerns”原则的体现。
+ *          - ChannelPipeline：它是ChannelHandler链条的容器，每个Channel在创建后，自动被分配一个ChannelPipeline。
+ *          - ChannelFuture：这是Netty实现异步IO的基础之一，保证了同一个Channel操作的调用顺序。Netty扩展了Java标准的Future，提供了针对自己场景特有的Future定义。
+ *          - EventLoop （事件循环）：这是Netty处理事件的核心机制。我们在NIO中通常要做的几件事情，如注册感兴趣的事件、调度相应的Handler等，都是EventLoop负责。
  *      1、Netty 快速入门
  *          ~Bootstrap - Netty 应用程序通过设置 bootstrap（引导）类的开始，该类提供了一个 用于应用程序网络层配置的容器。
  *          ~Channel - 底层网络传输 API 必须提供给应用 I/O操作的接口，如读，写，连接，绑定等等。对于我们来说，这是结构几乎总是会成为一个“socket”。
@@ -226,7 +227,8 @@ import io.netty.buffer.ByteBuf;
  *          - Zero-copy, 就是在操作数据时, 不需要将数据 buffer 从一个内存区域拷贝到另一个内存区域. 因为少了一次内存的拷贝, 因此 CPU 的效率就得到的提升。
  *          - 在 OS 层面上的 Zero-copy 通常指避免在 用户态(User-space) 与 内核态(Kernel-space) 之间来回拷贝数据。
  *          - 但Netty中的Zero-copy与 OS 的Zero-copy不太一样, Netty的 Zero-copy 完全是在用户态(Java 层面)的, 它的 Zero-copy 的更多的是偏向于 优化数据操作。
- *
+ *      2、Netty 的设计强调了 “Separation Of Concerns”，通过精巧设计的事件机制，将 业务逻辑 和 无关技术逻辑进行隔离，并通过各种方便的抽象，一定程度上填补了基础平台和业务开发之间的鸿沟，
+ *         更有利于在应用开发中普及业界的最佳实践。   另外，Netty > java.nio+java.net ! - 从API能力范围来看，Netty完全是Java NIO框架的一个大大的超集。
  *
  */
 public class NettyLearn {
