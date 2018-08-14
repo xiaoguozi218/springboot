@@ -3,7 +3,7 @@ package com.example.test.interview;
 /**
  * Created by MintQ on 2018/7/10.
  *
- * 《*》三大框架方面问题
+ *《Spring》
  *    1、Spring 事务的隔离性，并说说每个隔离性的区别
  *       事务隔离级别: 1、读未提交 （会出现脏读, 不可重复读。基本不使用）
  *                   2、读已提交 （会出现不可重复读和幻读）               Oracle: 默认使用的是READ COMMITTED
@@ -38,7 +38,27 @@ package com.example.test.interview;
  *      3.再次，contextLoaderListener 监听器初始化完毕后，开始初始化web.xml中配置的Servlet，这里是 DispatcherServlet，这个servlet实际上是一个标准的前端控制器，用以转发、匹配、处理每个servlet请 求。
  *        DispatcherServlet上下文在初始化的时候会建立自己的IoC上下文，用以持有spring mvc相关的bean。
  *
- *   5、MyBatis中#{}与${}的区别：
+ *   5、Spring 中有多少种 IOC 容器？ BeanFactory 、ApplicationContext
+ *      - BeanFactory ： BeanFactory 就像一个包含 bean 集合的工厂类。它会在客户端要求时实例化 bean。
+ *      - ApplicationContext ： ApplicationContext 接口扩展了 BeanFactory 接口。它在 BeanFactory 基础上提供了一些额外的功能。
+ *
+ *   6、Spring IoC 的实现机制 ：Spring 中的 IoC 的实现原理就是 工厂模式 加 反射机制。
+ *
+ *   7、Spring 支持几种 bean scope？ Spring bean 支持 5 种 scope：
+ *      1、Singleton - 每个 Spring IoC 容器仅有一个单实例。
+ *      2、Prototype - 每次请求都会产生一个新的实例。
+ *      3、Request - 每一次 HTTP 请求都会产生一个新的实例，并且该 bean 仅在当前 HTTP 请求内有效。
+ *      4、Session - 每一次 HTTP 请求都会产生一个新的 bean，同时该 bean 仅在当前 HTTP session 内有效。
+ *      5、Global-session - 类似于标准的 HTTP Session 作用域，不过它仅仅在基于 portlet 的 web 应用中才有意义。Portlet 规范定义了全局 Session 的概念，它被所有构成某个 portlet web 应用的各种不同的 portlet 所共享。
+ *   8、Spring自动装配有哪些方式？ no、byName 、byType 、构造函数、autodetect 。
+ *
+ *   9、@Autowired 注解有什么用？- @Autowired 可以更准确地控制应该在何处以及如何进行自动装配。此注解用于在 setter 方法，构造函数，具有任意名称或多个参数的属性或方法上自动装配 bean。默认情况下，它是类型驱动的注入。
+ *
+ *   10、Spring AOP and AspectJ AOP 有什么区别？
+ *      - Spring AOP 基于动态代理方式实现；AspectJ 基于静态代理方式实现。
+ *
+ *《MyBatis》
+ *   1、MyBatis中#{}与${}的区别：
  *      - #方式能够很大程度防止sql注入 - #{} 在预处理时，会把参数部分用一个占位符 ? 代替 - #{} 的参数替换是发生在 DBMS 中，而 ${} 则发生在动态解析过程中。
  *      - $方式无法防止Sql注入
  *      - 一般能用#的就别用$
