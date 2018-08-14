@@ -1,6 +1,9 @@
 package com.example.structure.collection;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * Created by MintQ on 2018/6/12.
@@ -45,5 +48,43 @@ import java.util.LinkedList;
  *
  */
 public class List {
+
+    public static void main(String[] args) {
+        //去除List集合中的重复值（四种好用的方法）
+
+        //1、set集合去重，不打乱顺序
+        ArrayList<String> list = new ArrayList<String>();
+        list.add("aaa");
+        list.add("bbb");
+        list.add("aaa");
+        list.add("aba");
+        list.add("aaa");
+
+//        Set set = new HashSet();
+//        ArrayList newList = new ArrayList();
+//        for (String cd:list) {
+//            if(set.add(cd)){
+//                newList.add(cd);
+//            }
+//        }
+        //2、遍历后判断赋给另一个list集合
+//        ArrayList<String> newList = new  ArrayList<String>();
+//        for (String cd:list) {
+//            if(!newList.contains(cd)){
+//                newList.add(cd);
+//            }
+//        }
+
+        //3、set去重
+//        Set set = new  HashSet();
+//        ArrayList newList = new  ArrayList();
+//        set.addAll(list);
+//        newList.addAll(set);
+
+        //4、set去重(缩减为一行)
+        ArrayList newList = new ArrayList(new HashSet(list));
+
+        System.out.println( "去重后的集合： " + newList);
+    }
 
 }
