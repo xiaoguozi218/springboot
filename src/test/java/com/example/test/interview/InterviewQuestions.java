@@ -4,7 +4,7 @@ package com.example.test.interview;
  * Created by MintQ on 2018/7/10.
  *
  *《Spring》
- *    1、Spring 事务的隔离性，并说说每个隔离性的区别
+ *    1、Spring 事务的隔离性，并说说每个隔离性的区别: 事务的隔离级别是为了解决并发问题。
  *       事务隔离级别: 1、读未提交 （会出现脏读, 不可重复读。基本不使用）
  *                   2、读已提交 （会出现不可重复读和幻读）               Oracle: 默认使用的是READ COMMITTED
  *                   3、可重复读 （会出现幻读）                         MYSQL: 默认为REPEATABLE_READ级别
