@@ -1,9 +1,6 @@
 package com.example.structure.collection;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by MintQ on 2018/6/12.
@@ -45,6 +42,23 @@ import java.util.Set;
  *
  *  注意：iterator()和listIterator()返回的迭代器都遵循fail-fast机制。
  *
+ *《fail-fast机制》 -
+ *  - 背景： 在JDK的Collection中我们时常会看到类似于这样的话：例如，ArrayList:
+ *          注意，迭代器的快速失败行为无法得到保证，因为一般来说，不可能对是否出现不同步并发修改做出任何硬性保证。快速失败迭代器会尽最大努力抛出 ConcurrentModificationException。
+ *          因此，为提高这类迭代器的正确性而编写一个依赖于此异常的程序是错误的做法：迭代器的快速失败行为应该仅用于检测 bug。
+ *  一、什么是fail-fast机制 -  “快速失败”也就是fail-fast，它是Java集合的一种 错误检测机制。
+ *      当多个线程对集合进行结构上的改变的操作时，有可能会产生fail-fast机制。记住是有可能，而不是一定。例如：假设存在两个线程（线程1、线程2），线程1通过Iterator在遍历集合A中的元素，
+ *      在某个时候线程2修改了集合A的结构（是结构上面的修改，而不是简单的修改集合元素的内容），那么这个时候程序就会抛出 ConcurrentModificationException 异常，从而产生fail-fast机制。
+ *      如果单线程违反了规则，同样也有可能会抛出改异常。
+ *  二、fail-fast产生原因 -
+ *      从上面的源代码我们可以看出，ArrayList中无论add、remove、clear方法只要是涉及了改变ArrayList元素的个数的方法都会导致modCount的改变。
+ *      所以我们这里可以初步判断由于expectedModCount 得值与modCount的改变不同步，导致两者之间不等从而产生fail-fast机制。
+ *  三、fail-fast解决办法 -
+ *      方案一：在遍历过程中所有涉及到改变modCount值得地方全部加上synchronized或者直接使用Collections.synchronizedList，这样就可以解决。但是不推荐，因为增删造成的同步锁可能会阻塞遍历操作。
+ *      方案二：使用CopyOnWriteArrayList来替换ArrayList。推荐使用该方案。 (COW)
+ *             - CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。
+ *               这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。
+ *
  *
  */
 public class List {
@@ -53,12 +67,12 @@ public class List {
         //去除List集合中的重复值（四种好用的方法）
 
         //1、set集合去重，不打乱顺序
-        ArrayList<String> list = new ArrayList<String>();
-        list.add("aaa");
-        list.add("bbb");
-        list.add("aaa");
-        list.add("aba");
-        list.add("aaa");
+//        ArrayList<String> list = new ArrayList<String>();
+//        list.add("aaa");
+//        list.add("bbb");
+//        list.add("aaa");
+//        list.add("aba");
+//        list.add("aaa");
 
 //        Set set = new HashSet();
 //        ArrayList newList = new ArrayList();
@@ -82,9 +96,60 @@ public class List {
 //        newList.addAll(set);
 
         //4、set去重(缩减为一行)
-        ArrayList newList = new ArrayList(new HashSet(list));
+//        ArrayList newList = new ArrayList(new HashSet(list));
+//
+//        System.out.println( "去重后的集合： " + newList);
+        for(int i = 0 ; i < 10;i++){
+            list.add(i);
+        }
+        new threadOne().start();
+        new threadTwo().start();
 
-        System.out.println( "去重后的集合： " + newList);
+    }
+
+    private static ArrayList<Integer> list = new ArrayList<Integer>();
+
+
+    /**
+     * @desc:线程one迭代list
+     * @Project:test
+     * @Authro:gsh
+     * @data:2014年7月26日
+     */
+    private static class threadOne extends Thread{
+        @Override
+        public void run() {
+            Iterator<Integer> iterator = list.iterator();
+            while(iterator.hasNext()){
+                int i = iterator.next();
+                System.out.println("ThreadOne 遍历:" + i);
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * @desc:当i == 3时，修改list
+     * @Project:test
+     * @Authro:gsh
+     * @data:2014年7月26日
+     */
+    private static class threadTwo extends Thread{
+        @Override
+        public void run(){
+            int i = 0 ;
+            while(i < 6){
+                System.out.println("ThreadTwo run：" + i);
+                if(i == 3){
+                    list.remove(i);
+                }
+                i++;
+            }
+        }
     }
 
 }
