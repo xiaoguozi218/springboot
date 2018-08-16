@@ -216,8 +216,21 @@ import io.netty.buffer.ByteBuf;
  *             - release（）将会递减对象引用的数目。当这个引用计数达到0时，对象已被释放，并且该方法返回 true。- 在一般情况下，最后访问的对象负责释放它。
  *     3、ChannelHandler 和 ChannelPipeline
  *        3.1、ChannelHandler 家族
+ *             - Channel 生命周期：channelRegistered ——> channelActive ——> channelInactive ——> channelUnregistered
+ *             - ChannelHandler 生命周期：当 ChannelHandler 添加到 ChannelPipeline，或者从 ChannelPipeline 移除后，这些将会调用。每个方法都会带 ChannelHandlerContext 参数
+ *             - ChannelHandler 子接口：Netty 提供2个重要的 ChannelHandler 子接口：1、ChannelInboundHandler - 处理进站数据，并且所有状态都更改
+ *                                                                             2、ChannelOutboundHandler - 处理出站数据，允许拦截各种操作
  *        3.2、ChannelPipeline
- *        3.3、ChannelHandlerContext
+ *             - 每创建一个新的Channel ,就会分配一个新的 ChannelPipeline。这个关联是 永久性的;Channel 既不能附上另一个 ChannelPipeline 也不能分离 当前这个。
+ *               这是一个 Netty 的固定方面的组件生命周期,开发人员无需特别处理。
+ *             - 总结：- 一个 ChannelPipeline 是用来保存关联到一个 Channel 的ChannelHandler
+ *                    - 可以修改 ChannelPipeline 通过动态添加和删除 ChannelHandler
+ *                    - ChannelPipeline 有着丰富的API调用动作来回应入站和出站事件。
+ *        3.3、ChannelHandlerContext - 一个接口
+ *             - ChannelHandlerContext 代表 ChannelHandler 和ChannelPipeline 之间的关联,并在 ChannelHandler 添加到 ChannelPipeline 时创建一个实例。
+ *               ChannelHandlerContext 的主要功能是管理通过同一个 ChannelPipeline 关联的 ChannelHandler 之间的交互。
+ *             - 为什么共享 ChannelHandler？
+ *               常见原因是要在多个 ChannelPipelines 上安装一个 ChannelHandler 以此来实现跨多个渠道收集统计数据的目的。
  *
  *        3.4、总结：本章带你深入窥探了一下 Netty 的数据处理组件: ChannelHandler。
  *               我们讨论了 ChannelHandler 之间是如何链接的以及它在像ChannelInboundHandler 和 ChannelOutboundHandler这样的化身中是如何与 ChannelPipeline 交互的。
