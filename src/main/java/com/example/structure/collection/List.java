@@ -59,6 +59,10 @@ import java.util.*;
  *             - CopyOnWrite容器即写时复制的容器。通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。
  *               这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。
  *
+ *《高效遍历Java容器》- forEach vs. C Style vs. Stream API
+ *  - 使用 C 语言形式的 for 循环，JVM 每次仅仅增加一个数字，然后直接从内存里读出数据。这使得它非常迅速。
+ *    但是 forEach 就大不一样，JVM 需要把 forEach 转换成一个 iterator，然后每个元素都调用一次 hasNext() 方法。这就是 forEach 比 C 语言的形式慢一些的原因。
+ *  - Foreach 和 Stream API 用来处理集合是很方便的。你可以更快的写代码。不过，如果你的系统很稳定，性能是一个主要的考量，你应该考虑一下重写你的循环。
  *
  */
 public class List {
