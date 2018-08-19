@@ -101,6 +101,29 @@ package com.example.test.interview;
  *     7、什么是不可变对象（immutable object）？Java 中怎么创建一个不可变对象？
  *          ~不可变对象指对象一旦被创建，状态就不能再改变。任何修改都会创建一个新的对象，如 String、Integer及其它包装类。
  *
+ *《计算机网络》-
+ *  1、为什么有了MAC(IP)还需要IP(MAC)？ （MAC地址已经是唯一了，为什么需要IP地址？）
+ *     - MAC是链路层，IP是网络层，每一层干每一层的事儿，之所以在网络上分链路层、网络层(...，就是将问题简单化。
+ *     - 历史的兼容问题。
+ *  2、TCP 每个状态说一下，TIME-WAIT状态说一下？
+ *     1、CLOSED：初始状态，表示TCP连接是“关闭着的”或“未打开的”。
+ *     2、LISTEN：表示服务器端的某个SOCKET处于监听状态，可以接受客户端的连接。
+ *     3、SYN-SENT：表示客户端已发送SYN报文。当客户端SOCKET执行connect()进行连接时，它首先发送SYN报文，然后随即进入到SYN_SENT状态。
+ *     4、SYN_RCVD：表示服务器接收到了来自客户端请求连接的SYN报文。当TCP连接处于此状态时，再收到客户端的ACK报文，它就会进入到ESTABLISHED状态。
+ *     5、ESTABLISHED：表示TCP连接已经成功建立。
+ *     6、FIN-WAIT-1：第一次主动请求关闭连接,等待对方的ACK响应。
+ *     7、CLOSE_WAIT：对方发了一个FIN报文给自己，回应一个ACK报文给对方。此时进入CLOSE_WAIT状态。
+ *        - 接下来呢，你需要检查自己是否还有数据要发送给对方，如果没有的话，那你也就可以close()这个SOCKET并发送FIN报文给对方，即关闭自己到对方这个方向的连接
+ *     8、FIN-WAIT-2：主动关闭端接到ACK后，就进入了FIN-WAIT-2。在这个状态下，应用程序还有接受数据的能力，但是已经无法发送数据。
+ *     9、LAST_ACK：当被动关闭的一方在发送FIN报文后，等待对方的ACK报文的时候，就处于LAST_ACK 状态
+ *     10、CLOSED：当收到对方的ACK报文后，也就可以进入到CLOSED状态了。
+ *     11、TIME_WAIT：表示收到了对方的FIN报文，并发送出了ACK报文。TIME_WAIT状态下的TCP连接会等待2*MSL
+ *         - （Max Segment Lifetime，最大分段生存期，指一个TCP报文在Internet上的最长生存时间。）
+ *     12、CLOSING：罕见的状态。表示双方都正在关闭SOCKET连接
+ *
+ *《操作系统》-
+ *
+ *
  *《Java核心技术36讲 总结》： https://time.geekbang.org/column/82
  *  1、列几个finally 不会被执行的情况：
  *      - 1、try-catch异常退出。比如：在try中 执行 System.exit(1);
