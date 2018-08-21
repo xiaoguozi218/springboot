@@ -134,6 +134,22 @@ package com.example.test.interview;
  *                   2、一个父进程创建了很多子进程，就是不回收，会造成内存资源的浪费。
  *     - 孤儿进程：父进程退出，子进程仍在运行中。这些子进程就叫做孤儿进程，孤儿进程将被init进程(进程号为1)所收养，并由init进程对它们完成状态收集工作
  *
+ *《mysql数据库面试总结》-
+ *  1、MySql的复制原理以及流程 - 基本原理流程，3个线程以及之间的关联；
+ *     -  1） 主：binlog线程——记录下所有改变了数据库数据的语句，放进master上的binlog中；
+ *     -  2） 从：io线程——在使用start slave 之后，负责从master上拉取 binlog 内容，放进 自己的relay log中；
+ *     -  3） 从：sql执行线程——执行relay log中的语句；
+ *  2、MySQL中myisam与innodb的区别，至少5点
+ *     1）InnoDB支持事物，而MyISAM不支持事物
+ *     2）InnoDB支持行级锁，而MyISAM支持表级锁
+ *     3）InnoDB支持MVCC, 而MyISAM不支持
+ *     4）InnoDB支持外键，而MyISAM不支持
+ *     5）InnoDB不支持全文索引（新版本也支持了 5.6版本以后），而MyISAM支持。
+ *  3、MySQL中InnoDB引擎的行锁是通过加在什么上完成
+ *     答：InnoDB是基于 索引 来完成行锁
+ *     例: select * from tab_with_index where id = 1 for update;
+ *     - for update 可以根据条件来完成行锁锁定,并且 id 是有索引键的列,如果 id 不是索引键那么InnoDB将完成表锁,并发将无从谈起
+ *
  *
  *《Java核心技术36讲 总结》： https://time.geekbang.org/column/82
  *  1、列几个finally 不会被执行的情况：
