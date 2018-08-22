@@ -76,7 +76,9 @@ package com.example.mq.kafka;
  *          1、at-least-once：至少一次，有可能会有多次。
  *          2、at-most-once：最多一次。- 如果在ack超时或返回错误时producer不重试
  *          3、exactly-once：刚好一次，即使producer重试发送消息，消息也会保证最多一次地传递给consumer。该语义是最理想的，也是最难实现的。
- *
+ *  5. Kafka 0.11新版本发布,主要的功能变更介绍：支持 1、EOS (EOS,exactly-once semantics) - 刚好一次语义
+ *                                              2、事务
+ *                                              3、幂等producer
  * 查漏补缺：
  *  1、segment达到一定的大小（可以通过配置文件设定,默认 1G ）后将不会再往该segment写数据，broker会创建新的segment。
  *  2、直击Kafka的心脏——控制器:  在Kafka集群中会有一个或者多个broker，其中有一个broker会被选举为控制器（Kafka Controller）:它负责管理整个集群中所有分区和副本的状态
