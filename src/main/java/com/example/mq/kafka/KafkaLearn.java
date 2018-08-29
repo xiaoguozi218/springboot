@@ -119,10 +119,10 @@ public class KafkaLearn {
     public static void main(String[] args) {
 
         //producer
-        new Thread(new UserKafkaProducer("test01")).start();
+//        new Thread(new UserKafkaProducer("test01")).start();
 
         //consumer
-        new Thread(new KafkaConsumer()).start();
+//        new Thread(new KafkaConsumer()).start();
     }
 
 }
