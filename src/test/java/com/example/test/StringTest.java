@@ -138,12 +138,25 @@ public class StringTest {
             7   方法结束，方法外打印str，由于str存的是1的地址，所有打印结果是”ab”
          *
          */
-        String str = "ab";
-        modify(str);
-        System.err.println(str);
+//        String str = "ab";
+//        modify(str);
+//        System.err.println(str);
 //        System.err.println(modify);
 
+        String m = "hello,world";
+        String n = "hello,world";
+        String u = new String(m);
+        String v = new String("hello,world");
 
+        System.out.println(m == n); //true
+        System.out.println(m == u); //false
+        System.out.println(m == v); //false
+        System.out.println(u == v); //false
+        /**
+         * 结论：m和n是同一个对象
+         *      m,u,v都是不同的对象
+         *      m,u,v,n但都使用了同样的字符数组，并且用equal判断的话也会返回true
+         */
     }
 
 
