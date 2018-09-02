@@ -40,20 +40,20 @@ import java.util.TreeSet;
  *          2）通过字面值赋值创建的字符串对象存放在字符串池中，通过关键字new出来的字符串对象存放在堆中。
  *
  *《面试题》：
- *  1、String str4 = new String(“abc”) 创建多少个对象？- 所以，常量池中没有“abc”字面量则创建两个对象，否则创建一个对象，以及创建一个引用
+ *  1、String str4 = new String(“abc”) 创建多少个对象？- 所以，常量池中没有“abc”字面量则创建两个对象，否则创建一个对象。
  *     1）在常量池中查找是否有“abc”对象
  *        - 有则返回对应的引用实例
  *        - 没有则创建对应的实例对象
  *     2）在堆中 new 一个 String("abc") 对象
  *     3）将对象地址赋值给str4,创建一个引用
- *  2、String str1 = new String("A"+"B") ; 会创建多少个对象? - 总共 ： 5个
+ *  2、String str1 = new String("A"+"B") ; 会创建多少个对象? - 总共 ： 4个
  *     - str1：字符串常量池："A","B","AB" : 3个
  *             堆：new String("AB") ：1个
- *             引用： str1 ：1个
- *  3、String str2 = new String("ABC") + "ABC" ; 会创建多少个对象? - 总共 ： 3个
+ *
+ *  3、String str2 = new String("ABC") + "ABC" ; 会创建多少个对象? - 总共 ： 2个
  *     - str2 ：字符串常量池："ABC" : 1个
  *              堆：new String("ABC") ：1个
- *              引用： str2 ：1个
+ *
  *
  */
 public class StringTest {
