@@ -88,7 +88,17 @@ import java.io.InputStreamReader;
  *      - B也可能拥有一堆其他对象的引用，B引用的对象也不会被收集。所有这些未使用的对象将消耗宝贵的内存空间。
  *  3、如何防止内存泄漏？
  *      -
- *
+ *  4、一个java内存泄漏的排查案例 - https://mp.weixin.qq.com/s/oqNRrIiDqhAFKGcUuJcgxg
+ *     1）初步的现象 - 业务系统消费MQ中消息速度变慢，积压了200多万条消息，通过jstat观察到业务系统fullgc比较频繁,到最后干脆OOM了：
+ *                - 命令：jstat -gcutil 1505 250
+ *     2）进一步分析 - 既然知道了内存使用存在问题，那么就要知道是哪些对象占用了大量内存. 很多人都会想到把堆dump下来再用MAT等工具进行分析，但dump堆要花较长的时间，并且文件巨大，再从服务器上拖回本地导入工具，这个过程太折腾不到万不得已最好别这么干。
+ *                - 可以用更轻量级的在线分析，用jmap查看存活的对象情况（jmap -histo:live [pid]），可以看出HashTable中的元素有5000多万，占用内存大约1.5G的样子：
+ *                - 命令：jmap -histo:live 1505
+ *     3) 定位到代码 - 现在已经知道了是HashTable的问题，那么就要定位出什么代码引起的. - 使用了 btrace脚本
+ *                 - 接下来自然要看看是什么代码往HashTable里疯狂的put数据，于是用神器btrace跟踪Hashtable.put调用的堆栈。
+ *                 - 首先写btrace脚本TracingHashTable.java：- 然后运行 bin/btrace -cp build 4947 TracingHashTable.java
+ *                 - 可以看出是在接收到消息后查询入库的代码造成的，业务方法调用ibatis再到mysql jdbc驱动执行statement时put了大量的属性到HashTable中。
+ *                 - 通过以上排查已基本定位了由那块代码引起的，接下来就是打开代码工程进行白盒化改造了，对相应代码进行优化（不在本文范围内了。几个图中的pid不一致就别纠结了，有些是系统重启过再截图的）
  *《触发JVM进行Full GC的情况及应对策略》：
  *      - Minor GC ：从年轻代空间（包括 Eden 和 Survivor 区域）回收内存被称为 Minor GC
  *      - Major GC ：对老年代GC称为Major GC
