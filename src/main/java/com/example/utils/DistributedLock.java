@@ -38,6 +38,9 @@ import java.util.concurrent.locks.Lock;
  *  1、ZooKeeper是干啥的？~ ZooKeeper是一个 分布式协调服务，他为分布式应用提供了高效且可靠的分布式协调服务，提供了诸如统一命名空间服务，配置服务和分布式锁等分布式基础服务。
  *
  *  2、ZooKeeper基本概念:
+ *      -ZooKeeper 本身就是一个分布式程序（只要半数以上节点存活，ZooKeeper 就能正常服务）。
+ *      -ZooKeeper 将数据保存在内存 中，这也就保证了 高吞吐量和低延迟（但是内存限制了能够存储的容量不太大，此限制也是保持 Znode 中存储的数据量较小的进一步原因）。
+ *      -ZooKeeper 底层其实只提供了 两个功能：①管理（存储、读取）用户程序提交的数据；②为用户程序提交数据节点监听服务。
  *      ~集群角色:  和Paxos算法中的集群角色类型，ZooKeeper中包含Leader、Follower和Observer三个角色；
  *                 通过一次选举过程，被选举的机器节点被称为Leader，Leader机器为客户端提供读和写服务；
  *                 Follower和Observer是集群中的其他机器节点，唯一的区别就是：Observer不参与Leader的选举过程，也不参与写操作的过半写成功策略。
