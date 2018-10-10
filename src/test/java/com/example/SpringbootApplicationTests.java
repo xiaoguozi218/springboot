@@ -30,6 +30,8 @@ public class SpringbootApplicationTests {
 	public void payTest() throws Exception {
 //		redisService.set(UUID.randomUUID().toString(),"test",1l, TimeUnit.HOURS);
 
+
+
 //		System.out.println("库存为：" + store);
 	}
 
