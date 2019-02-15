@@ -1,5 +1,10 @@
 package com.example.structure.generics;
 
+import com.example.pattern.factory.Dog;
+import com.google.common.collect.Maps;
+
+import java.util.HashMap;
+
 /**
  * @Auther: gsh
  * @Date: 2018/8/15 10:04
@@ -15,5 +20,29 @@ package com.example.structure.generics;
  *
  */
 public class GenericsLearn {
+
+    class Dog{
+
+    }
+
+    class Cat{
+
+    }
+
+    public static void main(String[] args) {
+        GenericsLearn genericsLearn = new GenericsLearn();
+        HashMap<String, Cat> map1 = Maps.newHashMap();
+        HashMap<String, Dog> map2 = Maps.newHashMap();
+//        map.put("dog",genericsLearn.new Dog());   //不再允许添加
+//        map.put("cat",genericsLearn.new Cat());
+
+//        Cat cat =  map.get("cat");
+//        System.out.println(cat);
+
+
+        System.out.println(map1.getClass());
+        System.out.println(map2.getClass());
+    }
+
 
 }
