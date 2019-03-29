@@ -1,9 +1,18 @@
 package com.example.java8;
 
+import com.example.model.Person;
+import lombok.Data;
+
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by MintQ on 2018/7/6.
  *
  * 从java8开始，我们就可以通过java8中的 StrameAPI 与 Lambda 表达式实现函数式编程，可以让代码变得更加高效简洁。其中我开发中用得比较多的是，Optional，SteameAPI与lambda。
+ *
+ *
  *
  * 现在带你领略下Java8的新特性：
  *  一、接口的默认方法
@@ -36,10 +45,57 @@ package com.example.java8;
  *
  *  九、Date API
  *
- *
+ *《Java8解决了什么？》：下面我就来探索一下，Java8到底解决了一些什么问题。
+ *  - 其实很简单，我们对工具的改造的最终目的都是为了解决问题，以前有面向过程解决不了的问题，那么面向对象出来解决了；现在面向对象有许多问题，那么就可以用函数式编程来解决，所以这些变化是很自然的，Java要在不同时代的保持自己的活力，就必须与时俱进，所以Java8的出现就是自然而然的。
+ *  1、消除冗余类代码 - 函数式的lambda表达式通过将函数提升为“一等公民”，使得直接传递函数成为可能，而不必再为了传递实现某个功能的函数而强行传递一个冗余的外包类。
+ *  2、内部迭代替代外部迭代 -
+ *  3、安全简洁地并行 - 如果我们有大量数据要处理，通常会使用多线程，在Java8之前，使用多线程是一件比较麻烦的事：
+ *      - 我们得自己合理的划分数据
+ *      - 手动为每一部分数据单独分配一个线程，还有可能会产生竞态条件需要进行同步
+ *      - 完成每个线程的结果的合并，得到最终结果。
+ *      这个过程是比较麻烦的，易错的。使用流能够安全简洁的使用多核，甚至于你都不需要关心多线程的具体实现。
  *
  */
 public class Java8Learn {
+
+
+    public static void main(String[] args) {
+        List<Person> workers = new LinkedList<>();
+        workers.add( new Person("aa",23));
+        workers.add( new Person("abc",21));
+        workers.add( new Person("cdf",18));
+
+        //1、如果要对这个list按照People的年龄排序，并打印出来，那么在Java8之前会这样写：
+        workers.sort(new Comparator<Person>() {
+            @Override
+            public int compare(Person o1, Person o2) {
+                return o1.getAge()>o2.getAge()?1:-1;
+            }
+        });
+        for (Person p:workers ) {
+            System.out.println(p.getName()+":"+p.getAge());
+        }
+
+        //Java8引入了函数式编程的lambda表达式，就可以这样写了：
+        workers.sort((o1, o2) -> o1.getAge()>o2.getAge()?1:-1);
+        for (Person p:workers ) {
+            System.out.println(p.getName()+":"+p.getAge());
+        }
+
+        //进一步，使用方法引用就可以这样写：
+        workers.sort(Comparator.comparing(Person::getAge));
+        for (Person p:workers ) {
+            System.out.println(p.getName()+":"+p.getAge());
+        }
+
+        //2、stream允许你以声明性方式处理数据集合，类似于SQL语句 -
+        // 这一段代码根本就没有循环了，Stream API 替你搞定了循环，这就是内部迭代 替代 外部迭代 ，亦即API的设计者 替 使用者完成了迭代，代码相当简洁。
+        //而且由于是内部迭代，所以Stream库可以选择最适合本机硬件的实现，达到性能优化的目的，如果是外部迭代，就需要调用者自己来优化了（你得承认许多API调用者没有这种优化能力）。
+        workers.sort(Comparator.comparing(Person::getAge));
+        workers.stream().map(p-> p.getName()+":"+p.getAge()).forEach(System.out::println);
+
+
+    }
 
 
 }
