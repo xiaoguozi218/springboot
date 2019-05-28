@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * CyclicBarrier，一种辅助性的同步结构，允许多个线程等待到达某个屏障。
  *
  * @author  gsh
  * @date  2018/12/13 上午11:10
