@@ -22,13 +22,40 @@ public class HappensBeforeLearn {
      * - 这条规则是指主线程 A 启动子线程 B 后，子线程 B 能够看到主线程在启动子线程 B 前的操作。
      *   子线程 t1 能够看见主线程对 count 变量的修改，所以在线程中打印出来的是 12 。这也就是线程启动规则
      */
+//    private static int count = 0;
+//    public static void main(String[] args) throws InterruptedException {
+//        Thread t1 = new Thread(() -> {
+//            System.out.println(count);
+//        });
+//        count = 12;
+//        t1.start();
+//    }
+
+//    private static int count = 0;
+//    public static void main(String[] args) throws InterruptedException {
+//        Thread t1 = new Thread(() -> {
+//            // t1 线程修改了变量
+//            count = 12;
+//        });
+//        t1.start();
+//        t1.join();
+//        // mian 线程可以看到 t1 线程改修后的变量
+//        System.out.println(count);
+//    }
+
+
     private static int count = 0;
     public static void main(String[] args) throws InterruptedException {
         Thread t1 = new Thread(() -> {
+            // t1 线程可以看到被中断前的数据
             System.out.println(count);
         });
-        count = 12;
         t1.start();
+        count = 25;
+        // t1 线程被中断
+        t1.interrupt();
     }
+
+
 
 }
