@@ -47,6 +47,27 @@ package com.example.concurrent.thread.threadlocal;
         }
  *  2、Spring处理事务，看看一个类TransactionSynchronizationManager
  *
+ *《来探讨一下最近面试问的ThreadLocal问题》：
+ *  1、内存泄漏原因探索
+ *      ThreadLocal操作不当会引发内存泄露，最主要的原因在于它的内部类ThreadLocalMap中的Entry的设计。
+ *      Entry继承了WeakReference<ThreadLocal<?>>，即Entry的key是弱引用，所以key'会在垃圾回收的时候被回收掉， 而key对应的value则不会被回收， 这样会导致一种现象：key为null，value有值。
+ *      key为空的话value是无效数据，久而久之，value累加就会导致内存泄漏。
+ *  2、手动释放ThreadLocal遗留存储?你怎么去设计/实现？- 这里主要是强化一下手动remove的思想和必要性，设计思想与连接池类似。
+ *      包装其父类remove方法为静态方法，如果是spring项目， 可以借助于bean的声明周期， 在拦截器的afterCompletion阶段进行调用。
+ *  3、弱引用导致内存泄漏，那为什么key不设置为强引用
+ *      如果key设置为强引用， 当threadLocal实例释放后， threadLocal=null， 但是threadLocal会有强引用指向threadLocalMap，threadLocalMap.Entry又强引用threadLocal， 这样会导致threadLocal不能正常被GC回收。
+ *      弱引用虽然会引起内存泄漏， 但是也有set、get、remove方法操作对null key进行擦除的补救措施， 方案上略胜一筹。
+ *  4、线程执行结束后会不会自动清空Entry的value - 一并考察了你的gc基础。
+ *      事实上，当currentThread执行结束后， threadLocalMap变得不可达从而被回收，Entry等也就都被回收了，但这个环境就要求不对Thread进行复用，但是我们项目中经常会复用线程来提高性能， 所以currentThread一般不会处于终止状态。
+ *  5、Thread和ThreadLocal有什么联系呢
+ *      Thread和ThreadLocal是绑定的， ThreadLocal依赖于Thread去执行， Thread将需要隔离的数据存放到ThreadLocal(准确的讲是ThreadLocalMap)中, 来实现多线程处理。
+ *  6、spring如何处理bean多线程下的并发问题 - 加分项来了
+ *      ThreadLocal天生为解决相同变量的访问冲突问题， 所以这个对于spring的默认单例bean的多线程访问是一个完美的解决方案。spring也确实是用了ThreadLocal来处理多线程下相同变量并发的线程安全问题。
+ *  7、spring 如何保证数据库事务在同一个连接下执行的
+ *      DataSourceTransactionManager 是spring的数据源事务管理器， 它会在你调用getConnection()的时候从数据库连接池中获取一个connection，
+ *      然后将其与ThreadLocal绑定， 事务完成后解除绑定。这样就保证了事务在同一连接下完成。
+ *
+ *
  */
 public class ThreadLocalLearn {
 }
