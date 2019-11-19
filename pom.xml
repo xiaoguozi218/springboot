@@ -289,6 +289,12 @@
 			<version>2.6.1</version>
 		</dependency>
 
+		<!-- webflux -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
