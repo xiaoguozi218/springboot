@@ -15,6 +15,10 @@ import java.util.stream.IntStream;
  * webflux demo
  * @author  gsh
  * @date  2019/11/15 下午10:13
+ *
+ *1、外行人都能看懂的WebFlux，错过了血亏！(https://juejin.im/post/5dd1f6fdf265da0bb854bc5d)
+ *
+ * 这正是WebFlux的好处：能够以固定的线程来处理高并发（充分发挥机器的性能）
  **/
 @RestController
 @RequestMapping("/flux")
