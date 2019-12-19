@@ -8,7 +8,7 @@ public class AnnoDemo {
         return str;
     }
 
-    @Autowired
+    @Autowiredd
     public void setStr(String str) {
         this.str = str;
     }

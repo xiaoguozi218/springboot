@@ -31,9 +31,9 @@ public class PayService {
 
     private final int totalNum = 100000;
 
-    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 2000L, multiplier = 1.5))
+    @Retryable(value = Exception.class, maxAttempts = 3, backoff = @Backoff(delay = 500L, multiplier = 1.5))
     public int minGoodsnum(int num) throws Exception {
-        logger.info("减库存开始" + LocalTime.now());
+        logger.info("减库存开始:" + LocalTime.now());
         try {
             int i = 1 / 0;
         } catch (Exception e) {
@@ -42,7 +42,7 @@ public class PayService {
         if (num <= 0) {
             throw new IllegalArgumentException("数量不对");
         }
-        logger.info("减库存执行结束" + LocalTime.now());
+        logger.info("减库存执行结束:" + LocalTime.now());
         return totalNum - num;
     }
 

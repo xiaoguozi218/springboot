@@ -19,7 +19,7 @@ public class AnnoTest {
         Method[] methods = demoClass.getDeclaredMethods();
         for (Method method :methods) {
             // 判断方法是否被加上了@Autowired这个注解
-            if (method.isAnnotationPresent(Autowired.class)) {
+            if (method.isAnnotationPresent(Autowiredd.class)) {
                 // 将方法设置为空调用的
                 method.setAccessible(true);
                 try {
