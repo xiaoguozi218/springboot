@@ -1,5 +1,6 @@
 package com.example.service;
 
+import com.example.utils.retry.RetryTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.retry.annotation.Backoff;
@@ -58,6 +59,23 @@ public class PayService {
     public int recover(Exception e) {
         logger.warn("减库存失败！！！" + LocalTime.now());
         return totalNum;
+    }
+
+
+    public int testRetry(int num) throws InterruptedException {
+        int result = new RetryTemplate() {
+            @Override
+            protected Integer doBiz() throws Exception {
+                logger.info("减库存开始:" + LocalTime.now());
+                if (num <= 0) {
+                    throw new IllegalArgumentException("数量不对");
+                }
+                logger.info("减库存执行结束:" + LocalTime.now());
+                return totalNum - num;
+            }
+        }.setRetryTime(3).setSleepTime(100).execute("扣减库存");
+        System.out.println(result);
+        return result;
     }
 
 }

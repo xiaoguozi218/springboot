@@ -26,7 +26,7 @@ public abstract class RetryTemplate {
     private int retryTime = DEFAULT_RETRY_TIME;
 
     // 重试的睡眠时间
-    private int sleepTime = 0;
+    private int sleepTime = 100;
 
     public int getSleepTime() {
         return sleepTime;
@@ -60,56 +60,63 @@ public abstract class RetryTemplate {
      * todo 确定返回的封装类，根据返回结果的状态来判定是否需要重试
      * @return
      */
-    protected abstract Object doBiz() throws Exception;
+    protected abstract <T> T doBiz() throws Exception;
 
 
-    public Object execute() throws InterruptedException {
+    /**
+     *
+     * @author  gsh
+     * @date  2020/1/1 下午10:01
+     * @Param bizType 业务类型
+     * @return Object
+     * @throws InterruptedException
+     **/
+    public <T> T execute(String bizType) throws InterruptedException {
         for (int i = 0; i < retryTime; i++) {
             try {
                 return doBiz();
             } catch (Exception e) {
-                log.error("业务执行出现异常，e: {}", e);
+                log.error("{},业务执行出现异常,e:", bizType,e);
                 Thread.sleep(sleepTime);
             }
         }
-
         return null;
     }
 
 
-    public Object submit(ExecutorService executorService) {
-        if (executorService == null) {
-            throw new IllegalArgumentException("please choose executorService!");
-        }
+//    public Object submit(ExecutorService executorService) {
+//        if (executorService == null) {
+//            throw new IllegalArgumentException("please choose executorService!");
+//        }
+//
+//        return executorService.submit((Callable) () -> execute(""));
+//    }
 
-        return executorService.submit((Callable) () -> execute());
-    }
-
-    /**
-     * retryDemo
-     * @author  gsh
-     * @date  2019/12/19 下午3:09
-     **/
-    public static void retryDemo() throws InterruptedException {
-        Object ans = new RetryTemplate() {
-            @Override
-            protected Object doBiz() throws Exception {
-//                int temp = (int) (Math.random() * 10);
-                int temp = 4;
-                System.out.println(temp);
-
-                if (temp > 3) {
-                    throw new Exception("generate value bigger then 3! need retry");
-                }
-
-                return temp;
-            }
-        }.setRetryTime(4).setSleepTime(10).execute();
-        System.out.println(ans);
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        retryDemo();
-    }
+//    /**
+//     * retryDemo
+//     * @author  gsh
+//     * @date  2019/12/19 下午3:09
+//     **/
+//    public static void retryDemo() throws InterruptedException {
+//        Object ans = new RetryTemplate() {
+//            @Override
+//            protected Object doBiz() throws Exception {
+////                int temp = (int) (Math.random() * 10);
+//                int temp = 4;
+//                System.out.println(temp);
+//
+//                if (temp > 3) {
+//                    throw new Exception("generate value bigger then 3! need retry");
+//                }
+//
+//                return temp;
+//            }
+//        }.setRetryTime(4).setSleepTime(10).execute("");
+//        System.out.println(ans);
+//    }
+//
+//    public static void main(String[] args) throws InterruptedException {
+//        retryDemo();
+//    }
 
 }

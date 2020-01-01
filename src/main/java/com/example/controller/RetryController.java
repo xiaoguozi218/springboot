@@ -16,7 +16,8 @@ public class RetryController {
 
     @GetMapping("/createOrder")
     public String createOrder(@RequestParam int num) throws Exception{
-        int remainingnum = payService.minGoodsnum(num == 0 ? 1: num);
+//        int remainingnum = payService.minGoodsnum(num == 0 ? 1: num);
+        int remainingnum = payService.testRetry(num);
         log.info("剩余的数量==="+remainingnum);
         return "库库存成功";
     }
