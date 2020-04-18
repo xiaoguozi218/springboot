@@ -10,6 +10,15 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+
+/**
+ * Java项目构建基础：统一结果，统一异常，统一日志 : https://mp.weixin.qq.com/s/hEWEYFXyuvrjldIgA0vDEA
+ * @author  gsh
+ * @date  2020/4/18 上午11:21
+ * @Param
+ * @return
+ * @throws
+ **/
 @SpringBootApplication
 @EnableRetry    //入口类上开启retry的拦截，使用@EnableRetry注解。
 //@ServletComponentScan	//这里关键是要在启动类上加上注解@ServletComponentScan
