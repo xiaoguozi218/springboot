@@ -1,6 +1,6 @@
 package com.example.algorithm.alibaba;
 
-import com.clearspring.analytics.util.Lists;
+import com.google.common.collect.Lists;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
