@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 /**
  * 阿里面试题
@@ -71,6 +72,33 @@ public class CharMatch {
         return false;
     }
 
+    /**
+     * 方法二
+     * @author  gsh
+     * @date  2020/4/26 下午1:15
+     * @Param s
+     * @return
+     **/
+    public static boolean isValid(String s) {
+        Stack<Character> stack = new Stack<Character>();
+        for (char c : s.toCharArray()) {
+            if (c == '(') {
+                stack.push(')');
+            }
+            else if (c == '{') {
+                stack.push('}');
+            }
+            else if (c == '[') {
+                stack.push(']');
+            }
+            else if (stack.isEmpty() || stack.pop() != c) {
+                return false;
+            }
+        }
+        return stack.isEmpty();
+    }
+
+
 //    @Test
 //        public void test1(){
 //            boolean cheched = CharMatch.cheched("{()[]{}}");
@@ -78,7 +106,8 @@ public class CharMatch {
 //    }
 
     public static void main(String[] args) {
-        boolean cheched = CharMatch.cheched("{()[]{}}");
+//        boolean cheched = CharMatch.cheched("{()[]{}}");
+        boolean cheched = isValid("{()}");
         System.out.println("checked : "+cheched);
     }
 
