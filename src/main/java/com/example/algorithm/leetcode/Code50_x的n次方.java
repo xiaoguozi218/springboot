@@ -27,6 +27,18 @@ package com.example.algorithm.leetcode;
 public class Code50_x的n次方 {
 
 
+    public double myPow(double x, int n) {
+        if (n < 0) {
+            n = -n;
+            x = 1 / x;
+        }
+        double ans = 1;
+        for (int i = 0; i < n; i++)
+            ans = ans * x;
+        return ans;
+    }
+
+
     /**
      * 解法二 递归
      * 直接利用递归吧：
