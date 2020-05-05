@@ -23,7 +23,7 @@ package com.example.algorithm.sort;
  *                  快速排序使用 分治法（Divideandconquer）策略来把一个串行（list）分为两个子串行（sub-lists）。
  *      算法步骤：1、从数列中挑出一个元素，称为“基准”（pivot），
  *              2、重新排序数列，所有元素比基准值小的摆放在基准前面，所有元素比基准值大的摆在基准的后面（相同的数可以到任一边）。在这个分区退出之后，该基准就处于数列的中间位置。这个称为分区（partition）操作。
- *              3、递归地（recursive）把小于基准值元素的子数列和大于基准值元素的子数列排序。
+ *              3、递归地（recursion）把小于基准值元素的子数列和大于基准值元素的子数列排序。
  *           递归的最底部情形，是数列的大小是零或一，也就是永远都已经被排序好了。虽然一直递归下去，但是这个算法总会退出，因为在每次的迭代（iteration）中，它至少会把一个元素摆到它最后的位置去。
  *  二、堆排序算法：堆排序（Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆积是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。
  *                堆排序的平均时间复杂度为Ο(nlogn) 。
@@ -70,6 +70,8 @@ public class SortTest {
 		 * 可以归类，就是4、3、2、1,,也就是它跟轮数有关系，轮数增加，比较次数就减少，比较次数n = m - i，i轮数
 		 */
         for(int i = 0; i < arr.length - 1; i++) {
+            // 此处你可能会疑问的j<n-i-1，因为冒泡是把每轮循环中较大的数飘到后面,数组下标又是从0开始的，i下标后面已经排序的个数就得多减1，
+            // 总结就是i增多少，j的循环位置减多少,所以 j < arr.length - 1 - i
             for(int j = 0; j < arr.length - 1 - i; j++){
                 //从小到大，大的值放后面位置。
                 if (arr[j] > arr[j+1]){
@@ -175,6 +177,112 @@ public class SortTest {
 
     }
 
+    public static void quickSort_3(int[] arr , int leftIndex , int rightIndex) {
+        int left = leftIndex;
+        int right = rightIndex;
+        // 待排序的第一个元素作为基准值
+        int key = arr[left];
+        // 从左右两边交替扫描，直到left = right
+        while (left < right) {
+            while (arr[right] >= key && right > left) {
+            // 从右往左扫描，找到第一个比基准值小的元素
+                right--;
+            }
+            // 找到这种元素将arr[right]放入arr[left]中
+            arr[left] = arr[right];
+            while (arr[left] <= key && left < right) {
+            // 从左往右扫描，找到第一个比基准值大的元素
+                left++;
+            }
+            // 找到这种元素将arr[left]放入arr[right]中
+            arr[right] = arr[left];
+        }
+        // 基准值归位
+        arr[left] = key;
+        // 对基准值左边的元素进行递归排序
+        quickSort(arr, leftIndex, left - 1);
+        // 对基准值右边的元素进行递归排序。
+        quickSort(arr, right + 1, rightIndex);
+    }
+
+    /**
+     * 插入排序
+     * @author 溪云阁
+     * @param arr
+     * @return int[]
+     * 一组无序序列{A1,A2,........An}
+     * 先取出A1，然后从A2与A1比较，比较完之后序列状况是{A1,A2}{A3..........An}，这时候其中{A1,A2}就变成有序
+     * 然后取出A3 ，放到{A1,A2}有序序列合适位置，从而形成{A1,A2,A3}{A4........An}
+     * 重复这个过程，直到取出An放入{A1,A2........An-1}有序序列中
+     */
+    public static int[] insertSort(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            // 保存每次需要插入的那个数
+            int temp = arr[i];
+            int j;
+            for (j = i; j > 0 && arr[j - 1] > temp; j--) {
+            // 把大于需要插入的数往后移动。最后不大于temp的数就空出来j
+                arr[j] = arr[j - 1];
+            }
+            // 将需要插入的数放入这个位置
+            arr[j] = temp;
+        }
+        return arr;
+    }
+
+    /**
+     * 两路归并算法，两个排好序的子序列合并为一个子序列
+     * @author 溪云阁
+     * @param a
+     * @param left
+     * @param mid
+     * @param right void
+     */
+    public static void merge(int[] a, int left, int mid, int right) {
+        // 辅助数组
+        final int[] tmp = new int[a.length];
+        // p1、p2是检测指针，k是存放指针
+        int p1 = left, p2 = mid + 1, k = left;
+        while (p1 <= mid && p2 <= right) {
+            if (a[p1] <= a[p2])
+                tmp[k++] = a[p1++];
+            else
+                tmp[k++] = a[p2++];
+        }
+        while (p1 <= mid) {
+            // 如果第一个序列未检测完，直接将后面所有元素加到合并的序列中
+            tmp[k++] = a[p1++];
+        }
+        while (p2 <= right) {
+            // 同上
+            tmp[k++] = a[p2++];
+        }
+        // 复制回原素组
+        for (int i = left; i <= right; i++) {
+            a[i] = tmp[i];
+        }
+    }
+    /**
+     * 归并排序
+     * @author 溪云阁
+     * @param a
+     * @param start
+     * @param end void
+     */
+    public static void mergeSort(int[] a, int start, int end) {
+        // 当子序列中只有一个元素时结束递归
+        if (start < end) {
+            // 划分子序列
+            final int mid = (start + end) / 2;
+            // 对左侧的序列进行递归排序
+            mergeSort(a, start, mid);
+            // 对右侧的序列进行递归排序
+            mergeSort(a, mid + 1, end);
+            // 合并
+            merge(a, start, mid, end);
+        }
+    }
+
     public static void main(String[] args) {
         //定义一个一维组数
         int[] arr1 = {5,8,3,9,10,55,32};
@@ -186,6 +294,15 @@ public class SortTest {
         int[] arr3 = {5,8,3,9,10,55,32};
         SortTest.quickSort(arr3,0,arr3.length-1);
         printArray(arr3);
+        int[] arr4 = {5,8,3,9,10,55,32};
+        SortTest.quickSort_3(arr4,0,arr3.length-1);
+        printArray(arr4);
+        int[] arr5 = {5,8,3,9,10,55,32};
+        SortTest.insertSort(arr5);
+        printArray(arr5);
+        int[] arr6 = {5,8,3,9,10,55,32};
+        SortTest.mergeSort(arr6,0, arr6.length-1);
+        printArray(arr6);
 
     }
 
