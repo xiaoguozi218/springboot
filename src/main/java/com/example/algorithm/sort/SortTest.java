@@ -240,26 +240,23 @@ public class SortTest {
      */
     public static void merge(int[] a, int left, int mid, int right) {
         // 辅助数组
-        final int[] tmp = new int[a.length];
-        // p1、p2是检测指针，k是存放指针
-        int p1 = left, p2 = mid + 1, k = left;
-        while (p1 <= mid && p2 <= right) {
-            if (a[p1] <= a[p2])
-                tmp[k++] = a[p1++];
-            else
-                tmp[k++] = a[p2++];
+        final int[] temp = new int[a.length];
+        // i、j是检测指针，k是存放指针
+        int i = left, j = mid + 1, k = 0;
+        while (i <= mid && j <= right) {
+            if (a[i] <= a[j]) {
+                temp[k++] = a[i++];
+            } else {
+                temp[k++] = a[j++];
+            }
         }
-        while (p1 <= mid) {
-            // 如果第一个序列未检测完，直接将后面所有元素加到合并的序列中
-            tmp[k++] = a[p1++];
-        }
-        while (p2 <= right) {
-            // 同上
-            tmp[k++] = a[p2++];
-        }
-        // 复制回原素组
-        for (int i = left; i <= right; i++) {
-            a[i] = tmp[i];
+        // 如果第一个序列未检测完，直接将后面所有元素加到合并的序列中
+        while (i <= mid) temp[k++] = a[i++];
+        while (j <= right)  temp[k++] = a[j++]; // 同上
+        k = 0;
+        //将temp中的元素全部拷贝到原数组中
+        while(left <= right){
+            a[left++] = temp[k++];
         }
     }
     /**
@@ -273,7 +270,7 @@ public class SortTest {
         // 当子序列中只有一个元素时结束递归
         if (start < end) {
             // 划分子序列
-            final int mid = (start + end) / 2;
+            int mid = start + (end - start) / 2;    //防止整数越界
             // 对左侧的序列进行递归排序
             mergeSort(a, start, mid);
             // 对右侧的序列进行递归排序
