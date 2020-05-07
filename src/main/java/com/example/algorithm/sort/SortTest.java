@@ -240,7 +240,7 @@ public class SortTest {
      */
     public static void merge(int[] a, int left, int mid, int right) {
         // 辅助数组
-        final int[] temp = new int[a.length];
+        final int[] temp = new int[right - left +1];
         // i、j是检测指针，k是存放指针
         int i = left, j = mid + 1, k = 0;
         while (i <= mid && j <= right) {
@@ -253,10 +253,10 @@ public class SortTest {
         // 如果第一个序列未检测完，直接将后面所有元素加到合并的序列中
         while (i <= mid) temp[k++] = a[i++];
         while (j <= right)  temp[k++] = a[j++]; // 同上
-        k = 0;
+
         //将temp中的元素全部拷贝到原数组中
-        while(left <= right){
-            a[left++] = temp[k++];
+        for (k = 0; k < temp.length ; k++) {
+            a[left+k] = temp[k];
         }
     }
     /**
@@ -268,16 +268,17 @@ public class SortTest {
      */
     public static void mergeSort(int[] a, int start, int end) {
         // 当子序列中只有一个元素时结束递归
-        if (start < end) {
-            // 划分子序列
-            int mid = start + (end - start) / 2;    //防止整数越界
-            // 对左侧的序列进行递归排序
-            mergeSort(a, start, mid);
-            // 对右侧的序列进行递归排序
-            mergeSort(a, mid + 1, end);
-            // 合并
-            merge(a, start, mid, end);
+        if (start == end) {
+            return;
         }
+        // 划分子序列
+        int mid = start + (end - start) / 2;    //防止整数越界
+        // 对左侧的序列进行递归排序
+        mergeSort(a, start, mid);
+        // 对右侧的序列进行递归排序
+        mergeSort(a, mid + 1, end);
+        // 合并
+        merge(a, start, mid, end);
     }
 
     public static void main(String[] args) {
