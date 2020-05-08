@@ -178,6 +178,9 @@ public class SortTest {
     }
 
     public static void quickSort_3(int[] arr , int leftIndex , int rightIndex) {
+        if (leftIndex >= rightIndex) {
+            return;
+        }
         int left = leftIndex;
         int right = rightIndex;
         // 待排序的第一个元素作为基准值
@@ -200,9 +203,9 @@ public class SortTest {
         // 基准值归位
         arr[left] = key;
         // 对基准值左边的元素进行递归排序
-        quickSort(arr, leftIndex, left - 1);
+        quickSort_3(arr, leftIndex, left - 1);
         // 对基准值右边的元素进行递归排序。
-        quickSort(arr, right + 1, rightIndex);
+        quickSort_3(arr, right + 1, rightIndex);
     }
 
     /**
@@ -293,7 +296,7 @@ public class SortTest {
         SortTest.quickSort(arr3,0,arr3.length-1);
         printArray(arr3);
         int[] arr4 = {5,8,3,9,10,55,32};
-        SortTest.quickSort_3(arr4,0,arr3.length-1);
+        SortTest.quickSort_3(arr4,0,arr4.length-1);
         printArray(arr4);
         int[] arr5 = {5,8,3,9,10,55,32};
         SortTest.insertSort(arr5);
