@@ -19,7 +19,7 @@ package com.example.mq.kafka;
  *                              线程数	        线程名	            线程具体说明
                                  1	kafka-socket-acceptor_%x	Acceptor线程，负责监听Client端发起的请求
                                  N	kafka-network-thread_%d	    Processor线程，负责对Socket进行读写
-                                 M	kafka-request-handler-_%d	Worker线程，处理具体的业务逻辑并生成Response返回
+                                 M	kafka-request-handler-_%d	Handler线程，处理具体的业务逻辑并生成Response返回
  *  二、 这里可以简单总结一下其网络通信模型中的几个重要概念：
  *    (1) Acceptor：1个接收线程，负责监听新的连接请求，同时注册OPACCEPT 事件，将新的连接按照"round robin"方式交给对应的 Processor 线程处理；
  *    (2) Processor：N个处理器线程，其中每个 Processor 都有自己的 selector，它会向 Acceptor 分配的 SocketChannel 注册相应的 OPREAD 事件，N 的大小由“num.networker.threads”决定；
