@@ -25,47 +25,30 @@ import java.util.Map;
  *          方法默认是直接返回false，不会移除元素，所以需要重写该方法。即当缓存满后就移除最不常用的数。
  *
  */
-public class LRU<K,V> {
-
-    private static final float hashLoadFactory = 0.75f;
-
-    private LinkedHashMap<K,V> map;
-
-    private int cacheSize;
-
-    public LRU(int cacheSize) {
-        this.cacheSize = cacheSize;
-        int capacity = (int)Math.ceil(cacheSize / hashLoadFactory) + 1;
-        map = new LinkedHashMap<K,V>(capacity, hashLoadFactory, true){
-            private static final long serialVersionUID = 1;
-            @Override
-            protected boolean removeEldestEntry(Map.Entry eldest) {
-                return size() > LRU.this.cacheSize;
-            }
-        };
+public class LRUCache extends LinkedHashMap<Integer, Integer> {
+    //定义缓存的容量
+    private int capacity;
+    //带参数的构造器
+    public LRUCache(int capacity){
+        //调用LinkedHashMap的构造器，传入以下参数
+        super(16,0.75f,true);
+        //传入指定的缓存最大容量
+        this.capacity=capacity;
     }
 
-    public synchronized V get(K key) {
-        return map.get(key);
+    public int get(int key) {
+        return super.getOrDefault(key, -1);
     }
 
-    public synchronized void put(K key, V value) {
-        map.put(key, value);
+    public void put(int key, int value) {
+        super.put(key, value);
     }
 
-    public synchronized void clear() {
-        map.clear();
-    }
 
-    public synchronized int usedSize() {
-        return map.size();
+    //实现LRU的关键方法，如果map里面的元素个数大于了缓存最大容量，则删除链表的顶端元素
+    @Override
+    public boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest){
+        return size()>capacity;
     }
-
-    public void print() {
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            System.out.print(entry.getValue() + "--");
-        }
-        System.out.println();
-    }
-
 }
+
