@@ -31,6 +31,7 @@ public class LRUCache extends LinkedHashMap<Integer, Integer> {
     //带参数的构造器
     public LRUCache(int capacity){
         //调用LinkedHashMap的构造器，传入以下参数
+        //accessOrder false 基于插入顺序 true 基于访问顺序（get一个元素后，这个元素被加到最后，使用了LRU 最近最少被使用的调度算法）
         super(16,0.75f,true);
         //传入指定的缓存最大容量
         this.capacity=capacity;
