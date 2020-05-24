@@ -34,6 +34,10 @@ public class HeapSort {
         System.out.println(Arrays.toString(arr));
     }
 
+    /**
+     * 创建堆，
+     * @param arr 待排序列
+     */
     public static void heapSort(int[] arr) {
         //创建堆
         for (int i = arr.length - 1; i >= 0; i--) {
@@ -91,13 +95,12 @@ public class HeapSort {
     /**
      * 完成一次建堆，最大值在堆的顶部(根节点)
      */
-    public static void maxHeapify(int[] arrays, int size) {
-        // 从数组的开头开始，直到最后一个元素(角标为arrays.length-1)
-        for (int i = 0; i < size; i++) {
-            heapify(arrays, i, size);
-        }
-
-    }
+//    public static void maxHeapify(int[] arrays, int size) {
+//        // 从数组的尾部开始，直到第一个元素(角标为0)
+//        for (int i = size - 1; i >= 0; i--) {
+//            heapify(arrays, i, size);
+//        }
+//    }
 
     /**
      * 交换元素
