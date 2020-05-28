@@ -177,35 +177,35 @@ public class SortTest {
 
     }
 
-    public static void quickSort_3(int[] arr , int leftIndex , int rightIndex) {
-        if (leftIndex >= rightIndex) {
+    public static void quickSort_3(int[] arr , int left , int right) {
+        if (left >= right) {//递归出口
             return;
         }
-        int left = leftIndex;
-        int right = rightIndex;
+        int l = left;
+        int r = right;
         // 待排序的第一个元素作为基准值
-        int key = arr[left];
+        int key = arr[l];
         // 从左右两边交替扫描，直到left = right
-        while (left < right) {
-            while (arr[right] >= key && right > left) {
+        while (l < r) {
+            while (arr[r] >= key && l < r) {
             // 从右往左扫描，找到第一个比基准值小的元素
-                right--;
+                r--;
             }
             // 找到这种元素将arr[right]放入arr[left]中
-            arr[left] = arr[right];
-            while (arr[left] <= key && left < right) {
+            arr[l] = arr[r];
+            while (arr[l] <= key && l < r) {
             // 从左往右扫描，找到第一个比基准值大的元素
-                left++;
+                l++;
             }
             // 找到这种元素将arr[left]放入arr[right]中
-            arr[right] = arr[left];
+            arr[r] = arr[l];
         }
         // 基准值归位
-        arr[left] = key;
+        arr[l] = key;
         // 对基准值左边的元素进行递归排序
-        quickSort_3(arr, leftIndex, left - 1);
+        quickSort_3(arr, left, l - 1);
         // 对基准值右边的元素进行递归排序。
-        quickSort_3(arr, right + 1, rightIndex);
+        quickSort_3(arr, r + 1, right);
     }
 
     /**
