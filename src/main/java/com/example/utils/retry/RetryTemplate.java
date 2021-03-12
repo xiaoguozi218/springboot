@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * 模板方式 实现重试
- *
+ * https://www.cnblogs.com/panchanggui/p/11232915.html
  * 优点：
  *  简单（依赖简单：引入一个类就可以了； 使用简单：实现抽象类，讲业务逻辑填充即可；）
  *  灵活（这个是真正的灵活了，你想怎么干都可以，完全由你控制）
