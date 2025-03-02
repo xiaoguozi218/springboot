@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.Map;
 
-import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
-import static com.sun.xml.internal.fastinfoset.util.KeyIntMap.indexFor;
 
 /**
  * Created by gsh on 2018/7/18.
