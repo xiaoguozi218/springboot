@@ -8,10 +8,10 @@ package com.example.algorithm.sort;
  *
  *  排序算法有很多种，这里介绍Java中面试经常出现的三种 排序 方式：冒泡、选择、快速。
  *
- *  1、冒泡：
+ *  1、冒泡：时间复杂度为：O(n^2)
         顾明思义，是气泡从液体的底部到顶部的过程。在算法的过程中是把一组数据从第一位开始 两两比较（第1位和第2位，第2位和第3位...），选择大的值或者比较小的值交换到后面的位置。以这种方式比较第一轮后，这组数据中最大的值或者最小的就冒出来了，以此类推倒数第二、三位等。
  *
- *  2、选择：
+ *  2、选择：时间复杂度为：O(n^2)，空间复杂度为O(1)
  *     选择排序的方式，其实更加贴近我们正常的思考方式，就是从一组的数据的 开始位置，拿出这个数据，然后依次和其他位置中数据比较，比如找最大值，只要发现后面有比其大的值就进行互换，这样第一轮下来，第一个位置上的数据就是最大值，然后从第二位依次类推。
  *
  *  3、快速：快速排序之所以快速，是因为它使用了[分治法]。
@@ -81,11 +81,39 @@ public class SortTest {
         }
     }
 
-    private static void swap(int[] arr,int index1,int index2){
-        int temp = arr[index1];
-        arr[index1] = arr[index2];
-        arr[index2] = temp;
+
+    /**
+     * 使用冒泡排序算法对数组进行排序
+     * 该方法实现的是冒泡排序的优化版本，当一轮比较中没有发生交换时，说明数组已经有序，可以提前结束排序
+     *
+     * @param arr 待排序的整型数组
+     */
+    public static void bubbleSort2(int[] arr) {
+        // 外层循环控制排序的轮数，每轮找出一个最大值
+        for (int i = arr.length-1; i > 0 ; i--) {
+            // 内层循环用于比较相邻的两个元素，并在必要时交换它们
+            for (int j = 0; j < i; j++) {
+                // 如果当前元素大于下一个元素，则交换它们的位置
+                if(arr[j]>arr[j+1]){
+                    swap(arr,j,j+1);
+                }
+            }
+        }
     }
+
+    /**
+     * 交换数组中两个指定位置的元素
+     *
+     * @param arr 待操作的数组
+     * @param i 第一个元素的位置
+     * @param j 第二个元素的位置
+     */
+    private static void swap(int[] arr, int i, int j) {
+        int temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+
 
     //选择
     public static void selectSort(int[] arr) {
@@ -217,20 +245,23 @@ public class SortTest {
      * 先取出A1，然后从A2与A1比较，比较完之后序列状况是{A1,A2}{A3..........An}，这时候其中{A1,A2}就变成有序
      * 然后取出A3 ，放到{A1,A2}有序序列合适位置，从而形成{A1,A2,A3}{A4........An}
      * 重复这个过程，直到取出An放入{A1,A2........An-1}有序序列中
+     *
+     * 算法特性：
+     * 时间复杂度：O(n^2)，当输入数组完全有序时，插入排序达到最佳时间复杂度O(n)
+     * 空间复杂度：O(1)，原地排序：指针i和j使用常数大小的额外空间。
+     * 稳定排序：在插入操作过程中，会将元素插入到相等元素的右侧，不改变它们的顺序。
      */
-    public static int[] insertSort(int[] arr) {
+    public static void insertSort(int[] arr){
+        //外循环，从第二个元素开始，依次与前面的元素比较, 已排序区间为 [0, i-1]
         for (int i = 1; i < arr.length; i++) {
-            // 保存每次需要插入的那个数
-            int temp = arr[i];
-            int j;
-            for (j = i; j > 0 && arr[j - 1] > temp; j--) {
-            // 把大于需要插入的数往后移动。最后不大于temp的数就空出来j
-                arr[j] = arr[j - 1];
+            int base = arr[i], j = i - 1;
+            // 内循环：将 base 插入到已排序区间 [0, i-1] 中的正确位置
+            while (j >= 0 && arr[j] > base) {
+                arr[j + 1] = arr[j];    // 将当前元素arr[j]向右移动一位
+                j--;
             }
-            // 将需要插入的数放入这个位置
-            arr[j] = temp;
+            arr[j + 1] = base;  // 将 base 插入到正确位置 (在插入操作过程中，会将元素插入到相等元素的右侧)
         }
-        return arr;
     }
 
     /**
@@ -264,6 +295,12 @@ public class SortTest {
     }
     /**
      * 归并排序
+     *
+     * 算法特性:
+     * 时间复杂度：O(nlogn)，归并排序是稳定的排序算法，平均时间复杂度是O(nlogn)，最坏时间复杂度是O(nlogn)，最好时间复杂度是O(nlogn)。
+     * 空间复杂度：O(n)，归并排序不是原地排序算法，需要额外的存储空间。
+     * 稳定排序：在合并过程中，相等元素的次序保持不变。
+     *
      * @author 溪云阁
      * @param a
      * @param start

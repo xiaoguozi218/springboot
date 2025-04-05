@@ -270,6 +270,8 @@ public class ThreadLearn {
         Callable call = new Callable() {
             @Override
             public Object call() throws Exception {
+                ThreadLocal threadLocal = new ThreadLocal();
+                threadLocal.set("threadLocal");
                 Thread.sleep(5000); //休眠指定的时间，此处表示该操作比较耗时
                 return  "Other less important but longtime things.";
             }
