@@ -1,0 +1,30 @@
+graph TD
+%% 客户端部分
+    A[客户端应用] --> B[调用客户端 Stub]
+    B --> C[序列化参数]
+    C --> D[网络传输 TCP/HTTP等协议 ]
+
+%% 服务端部分
+    D --> E[服务端 Stub 接收请求]
+    E --> F[反序列化参数]
+    F --> G[调度并调用实际服务]
+    G --> H[服务执行并生成结果]
+    H --> I[服务端 Stub 序列化结果]
+    I --> J[网络返回结果]
+
+%% 客户端接收结果
+    J --> K[客户端 Stub 反序列化结果]
+    K --> L[返回结果给客户端应用]
+
+%% 标注关键组件（注释单独成行）
+%% 客户端Stub
+    style B fill:#f9f,stroke:#333
+%% 服务端Stub
+    style E fill:#b8d9a9,stroke:#333
+%% 序列化
+    style C fill:#a9d9d9,stroke:#333
+%% 反序列化
+    style F fill:#a9d9d9,stroke:#333
+%% 网络层
+    style D fill:#e0e0e0,stroke:#333
+    style J fill:#e0e0e0,stroke:#333
