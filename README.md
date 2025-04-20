@@ -9,3 +9,5 @@ Guns v3.0新增rest api服务,提供对接服务端接口的支持,并利用jwt 
 
 > * 修复菜单折叠无法折叠子菜单的子菜单的bug！
 > * 感谢Guns and Roses技术交流2群网友摇了摇头（931483459）提供的oracle版本的Guns，现在已上传到oracle分支
+
+
