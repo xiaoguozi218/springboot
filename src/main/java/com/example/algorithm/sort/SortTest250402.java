@@ -13,7 +13,8 @@ public class SortTest250402 {
 //        bubbleSort(arr);
 //        bubbleSort2(arr);
 //        quickSort3(arr, 0, arr.length-1);
-        insertSort(arr);
+//        insertSort(arr);
+        mergeSort(arr, 0, arr.length-1);
         System.err.println(Arrays.toString(arr));
     }
 
@@ -120,6 +121,46 @@ public class SortTest250402 {
                 j--;
             }
             arr[j + 1] = base;  // 将 base 插入到正确位置
+        }
+    }
+
+    public static void mergeSort(int[] arr, int left, int right){
+        if (left>=right) {
+            return;
+        }
+        //临时数组
+        int[] temp = new int[arr.length];
+        int mid = left + (right-left)/2;
+        // 对左半部分进行排序
+        mergeSort(arr, left, mid);
+        // 对右半部分进行排序
+        mergeSort(arr, mid+1, right);
+        // 合并两个已排序的子数组
+        merge(arr, left, mid, right, temp);
+    }
+
+    private static void merge(int[] arr, int left, int mid, int right, int[] temp) {
+        int i = left;
+        int j = mid+1;
+        int k = 0;
+        while (i<=mid && j<=right) {
+            if (arr[i]<=arr[j]) {
+                temp[k++] = arr[i++];
+            } else {
+                temp[k++] = arr[j++];
+            }
+        }
+        // 处理左半部分剩余的元素
+        while (i<=mid) {
+            temp[k++] = arr[i++];
+        }
+        // 处理右半部分剩余的元素
+        while (j<=right) {
+            temp[k++] = arr[j++];
+        }
+        // 将合并后的子数组复制回原数组
+        for (int l = 0; l < k; l++) {
+            arr[left+l] = temp[l];
         }
     }
 
